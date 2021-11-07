@@ -4,7 +4,7 @@ import pygame
 import sys
 
 from src.building import Building, TownCenter
-from src.constants import TS, MENU_HEIGHT
+from src.constants import TS, MENU_HEIGHT, Colors
 from src.mob import Mob, Villager
 from src.sprites import Spritesheet
 
@@ -85,11 +85,17 @@ class Game:
     def _draw_mouse_border(self):
         if self.mouse_down_start:
             pos = pygame.mouse.get_pos()
-            width = pos[0] - self.mouse_down_start[0]
-            height = pos[1] - self.mouse_down_start[1]
+            width = abs(pos[0] - self.mouse_down_start[0])
+            height = abs(pos[1] - self.mouse_down_start[1])
             surface = pygame.Surface([width, height]).convert_alpha()
-            pygame.draw.rect(surface, (255, 255, 255), (0, 0, width, height), 1)
-            self.screen.blit(surface, self.mouse_down_start)
+            pygame.draw.rect(surface, Colors.WHITE.value, (0, 0, width, height), 1)
+            diff_x = self.mouse_down_start[0] - pos[0]
+            diff_y = self.mouse_down_start[1] - pos[1]
+            self.screen.blit(
+                surface,
+                (self.mouse_down_start[0] if diff_x < 0 else pos[0],
+                 self.mouse_down_start[1] if diff_y < 0 else pos[1])
+            )
 
     def _handle_events(self):
         for event in pygame.event.get():
@@ -105,8 +111,12 @@ class Game:
                 self._evaluate_mouse_click()
 
     def _evaluate_mouse_click(self):
-        start = (self.mouse_down_start[0] / TS, self.mouse_down_start[1] / TS)
-        end = (self.mouse_down_end[0] / TS, self.mouse_down_end[1] / TS)
+        width = abs(self.mouse_down_end[0] - self.mouse_down_start[0])
+        height = abs(self.mouse_down_end[1] - self.mouse_down_start[1])
+        start_x = self.mouse_down_start[0] if self.mouse_down_start[0] < self.mouse_down_end[0] else self.mouse_down_end[0]
+        start_y = self.mouse_down_start[1] if self.mouse_down_start[1] < self.mouse_down_end[1] else self.mouse_down_end[1]
+        start = (start_x / TS, start_y / TS)
+        end = ((start_x + width) / TS, (start_y + height) / TS)
         player = self.players[0]
         clicked = False
         for building in player.buildings:
