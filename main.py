@@ -37,6 +37,7 @@ game = Game(
 
 # Event loop
 while game.is_playing:
-    game.loop()
+    ticks = pygame.time.get_ticks()
+    game.loop(ticks)
     pygame.display.flip()
     clock.tick(FPS_TARGET)

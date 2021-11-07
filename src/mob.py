@@ -175,6 +175,7 @@ class Crossbowman(MobUnit):
 
 class Mob:
     selected = False
+    move_to = None
 
     def __init__(self, unit: MobUnit, coords):
         self.unit = unit

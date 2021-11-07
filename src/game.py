@@ -26,6 +26,7 @@ class Game:
     mouse_down_start = None
     mouse_down_end = None
     is_playing = True
+    action = None
 
     def __init__(self, screen, scene, players: list[Player]):
         self.screen = screen
@@ -72,7 +73,7 @@ class Game:
         self.background.fill((0, 0, 0))
         self.show_menu = False
 
-    def loop(self):
+    def loop(self, ticks):
         self._handle_events()
         self._unit_move()
         self._unit_harvest()
@@ -101,8 +102,8 @@ class Game:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                # key_down(event.key, event.unicode)
-                pass
+                if event.key == pygame.K_m:
+                    self.action = 1
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_down_start = pygame.mouse.get_pos()
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -113,6 +114,15 @@ class Game:
         _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
         start = (_start[0] / TS, _start[1] / TS)
         end = (_end[0] / TS, _end[1] / TS)
+
+        if self.action == 1:
+            for mob in self.players[0].mobs:
+                if mob.selected:
+                    mob.move_to = end
+            self.action = None
+            self.mouse_down_start = None
+            return
+
         player = self.players[0]
         clicked = False
         for building in player.buildings:
@@ -146,7 +156,28 @@ class Game:
         self.screen.blit(self.background, (0, 0))
 
     def _unit_move(self):
-        pass
+        for player in self.players:
+            for mob in player.mobs:
+                if mob.move_to:
+                    x = floor(mob.move_to[0] - mob.coords[0])
+                    y = floor(mob.move_to[1] - mob.coords[1])
+                    if x < 0:
+                        amount_x = -1
+                    elif x > 0:
+                        amount_x = 1
+                    else:
+                        amount_x = 0
+                    if y < 0:
+                        amount_y = -1
+                    elif y > 0:
+                        amount_y = 1
+                    else:
+                        amount_y = 0
+                    coords_x = mob.coords[0] + amount_x
+                    coords_y = mob.coords[1] + amount_y
+                    mob.coords = (coords_x, coords_y)
+                    if mob.move_to[0] == coords_x and mob.move_to[1] == coords_y:
+                        mob.move_to = None
 
     def _draw_players(self):
         for player in self.players:
