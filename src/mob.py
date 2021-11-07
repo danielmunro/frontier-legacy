@@ -1,11 +1,20 @@
 from enum import Enum
 
+import pygame
+
+from src.constants import TS
 from src.resources import Costs
+from src.sprites import Spritesheet
 
 
 class AttackType(Enum):
     MELEE = 1
     RANGED = 2
+
+
+class Gender(Enum):
+    FEMALE = 1
+    MALE = 2
 
 
 class MobUnit:
@@ -35,9 +44,13 @@ class MobUnit:
         self.build_time = build_time
         self.costs = costs
 
+    def draw(self, sprites: Spritesheet):
+        pass
+
 
 class Villager(MobUnit):
     def __init__(self):
+        self.gender = Gender.FEMALE
         super().__init__(
             20,
             1,
@@ -51,6 +64,11 @@ class Villager(MobUnit):
             30,
             Costs(25, 0, 0, 0),
         )
+
+    def draw(self, sprites: Spritesheet):
+        surface = pygame.Surface([TS, TS]).convert_alpha()
+        surface.blit(sprites.mobs[Villager.__class__][0 if self.gender == Gender.FEMALE else 1], (0, 0))
+        return surface
 
 
 class Ruffian(MobUnit):

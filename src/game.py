@@ -14,8 +14,6 @@ class Player:
     wood = 100
     gold = 50
     stone = 0
-    mouse_down_start = None
-    mouse_down_end = None
 
     def __init__(self, mobs: list[Mob], buildings: list[Building], is_computer=True):
         self.mobs = mobs
@@ -24,6 +22,8 @@ class Player:
 
 
 class Game:
+    mouse_down_start = None
+    mouse_down_end = None
     is_playing = True
 
     def __init__(self, screen, scene, players: list[Player]):
@@ -78,8 +78,18 @@ class Game:
         self._unit_attack()
         self._draw_scene()
         self._draw_players()
+        self._draw_mouse_border()
         if self.show_menu:
             self._draw_menu()
+
+    def _draw_mouse_border(self):
+        if self.mouse_down_start:
+            pos = pygame.mouse.get_pos()
+            width = pos[0] - self.mouse_down_start[0]
+            height = pos[1] - self.mouse_down_start[1]
+            surface = pygame.Surface([width, height]).convert_alpha()
+            pygame.draw.rect(surface, (255, 255, 255), (0, 0, width, height), 1)
+            self.screen.blit(surface, self.mouse_down_start)
 
     def _handle_events(self):
         for event in pygame.event.get():
@@ -95,10 +105,14 @@ class Game:
                 self._evaluate_mouse_click()
 
     def _evaluate_mouse_click(self):
-        start = (floor(self.mouse_down_start[0] / TS), floor(self.mouse_down_start[1] / TS))
-        end = (floor(self.mouse_down_end[0] / TS), floor(self.mouse_down_end[1] / TS))
+        start = (self.mouse_down_start[0] / TS, self.mouse_down_start[1] / TS)
+        end = (self.mouse_down_end[0] / TS, self.mouse_down_end[1] / TS)
         player = self.players[0]
         clicked = False
+        for building in player.buildings:
+            building.selected = False
+        for mob in player.mobs:
+            mob.selected = False
         for building in player.buildings:
             building_start = building.coords
             building_end = (building.coords[0] + building.unit.size, building.coords[1] + building.unit.size)
@@ -108,12 +122,14 @@ class Game:
                     end[1] <= building_end[1]:
                 clicked = True
                 building.selected = not building.selected
+        for mob in player.mobs:
+            if floor(start[0]) <= mob.coords[0] <= floor(end[0]) and \
+                    floor(start[1]) <= mob.coords[1] <= floor(end[1]):
+                clicked = True
+                mob.selected = not mob.selected
         self.show_menu = clicked
-        if not clicked:
-            for building in player.buildings:
-                building.selected = False
-            for mob in player.mobs:
-                mob.selected = False
+        self.mouse_down_start = None
+        self.mouse_down_end = None
 
     def _draw_scene(self):
         for layer in self.scene:
@@ -144,7 +160,20 @@ class Game:
                         1,
                     )
             for mob in player.mobs:
-                pass
+                surface = mob.unit.draw(self.sprites)
+                self.screen.blit(surface, (mob.coords[0] * TS, mob.coords[1] * TS))
+                if mob.selected:
+                    pygame.draw.rect(
+                        self.screen,
+                        (255, 255, 255),
+                        (
+                            mob.coords[0] * TS,
+                            mob.coords[1] * TS,
+                            TS,
+                            TS,
+                        ),
+                        1,
+                    )
 
     def _unit_attack(self):
         pass

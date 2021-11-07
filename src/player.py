@@ -10,7 +10,7 @@ def get_start_buildings(player_number):
 
 
 def get_start_mobs(player_number):
-    coords = (4, 5) if player_number == 1 else (25, 26)
+    coords = (4, 6) if player_number == 1 else (25, 27)
     return [
         Mob(Villager(), (coords[0] - 1, coords[1])),
         Mob(Villager(), (coords[0], coords[1])),
