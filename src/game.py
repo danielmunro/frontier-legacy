@@ -75,7 +75,7 @@ class Game:
 
     def loop(self, ticks):
         self._handle_events()
-        self._unit_move()
+        self._unit_move(ticks)
         self._unit_harvest()
         self._unit_attack()
         self._draw_scene()
@@ -155,29 +155,39 @@ class Game:
                     self.background.blit(self.sprites.terrain[index][(x + y) % 2 == 0], (x * TS, y * TS))
         self.screen.blit(self.background, (0, 0))
 
-    def _unit_move(self):
+    def _unit_move(self, ticks):
         for player in self.players:
             for mob in player.mobs:
                 if mob.move_to:
                     x = floor(mob.move_to[0] - mob.coords[0])
                     y = floor(mob.move_to[1] - mob.coords[1])
+                    if mob.last_move_ticks is None:
+                        mob.last_move_ticks = ticks
+                    tick_diff = ticks - mob.last_move_ticks
+                    if tick_diff > mob.unit.movement_speed:
+                        amount = floor(tick_diff / mob.unit.movement_speed)
+                    else:
+                        amount = 0
                     if x < 0:
-                        amount_x = -1
+                        amount_x = -amount
                     elif x > 0:
-                        amount_x = 1
+                        amount_x = amount
                     else:
                         amount_x = 0
                     if y < 0:
-                        amount_y = -1
+                        amount_y = -amount
                     elif y > 0:
-                        amount_y = 1
+                        amount_y = amount
                     else:
                         amount_y = 0
                     coords_x = mob.coords[0] + amount_x
                     coords_y = mob.coords[1] + amount_y
                     mob.coords = (coords_x, coords_y)
+                    if amount > 0:
+                        mob.last_move_ticks = ticks
                     if mob.move_to[0] == coords_x and mob.move_to[1] == coords_y:
                         mob.move_to = None
+                        mob.last_move_ticks = None
 
     def _draw_players(self):
         for player in self.players:

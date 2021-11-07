@@ -60,7 +60,7 @@ class Villager(MobUnit):
             1,
             0,
             0,
-            1,
+            800,
             30,
             Costs(25, 0, 0, 0),
         )
@@ -176,6 +176,7 @@ class Crossbowman(MobUnit):
 class Mob:
     selected = False
     move_to = None
+    last_move_ticks = None
 
     def __init__(self, unit: MobUnit, coords):
         self.unit = unit
