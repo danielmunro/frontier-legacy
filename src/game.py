@@ -1,20 +1,25 @@
-import pygame
+from math import floor
 
-from src.building import Building
-from src.constants import TS
-from src.mob import Mob
+import pygame
+import sys
+
+from src.building import Building, TownCenter
+from src.constants import TS, MENU_HEIGHT
+from src.mob import Mob, Villager
 from src.sprites import Spritesheet
 
 
 class Player:
-    mobs: list[Mob] = []
-    buildings: list[Building] = []
     food = 100
     wood = 100
     gold = 50
     stone = 0
+    mouse_down_start = None
+    mouse_down_end = None
 
-    def __init__(self, is_computer=True):
+    def __init__(self, mobs: list[Mob], buildings: list[Building], is_computer=True):
+        self.mobs = mobs
+        self.buildings = buildings
         self.is_computer = is_computer
 
 
@@ -26,15 +31,89 @@ class Game:
         self.scene = scene
         self.players = players
         self.sprites = Spritesheet()
-        self.background = pygame.Surface(screen.get_size()).convert()
+        self.sprites.terrain = [
+                [
+                    self.sprites.create(0, 0),
+                    self.sprites.create(1, 0),
+                ],
+                [
+                    self.sprites.create(2, 0),
+                    self.sprites.create(3, 0),
+                ],
+                [
+                    self.sprites.create(0, 24),
+                    self.sprites.create(1, 24),
+                ],
+                [
+                    self.sprites.create(0, 24),
+                    self.sprites.create(1, 24),
+                ],
+                [
+                    self.sprites.create(2, 24),
+                    self.sprites.create(3, 24),
+                ],
+            ]
+        self.sprites.buildings = {
+            TownCenter.__class__: [
+                self.sprites.create(2, 7),
+                self.sprites.create(3, 7),
+                self.sprites.create(2, 8),
+                self.sprites.create(3, 8),
+            ],
+        }
+        self.sprites.mobs = {
+            Villager.__class__: [
+                self.sprites.create(5, 13),
+                self.sprites.create(6, 13),
+            ],
+        }
+        self.background = pygame.Surface(screen.get_size()).convert_alpha()
         self.background.fill((0, 0, 0))
+        self.show_menu = False
 
     def loop(self):
-        # self._unit_move()
-        # self._unit_harvest()
-        # self._unit_attack()
+        self._handle_events()
+        self._unit_move()
+        self._unit_harvest()
+        self._unit_attack()
         self._draw_scene()
-        # self._draw_players()
+        self._draw_players()
+        if self.show_menu:
+            self._draw_menu()
+
+    def _handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                # key_down(event.key, event.unicode)
+                pass
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.mouse_down_start = pygame.mouse.get_pos()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.mouse_down_end = pygame.mouse.get_pos()
+                self._evaluate_mouse_click()
+
+    def _evaluate_mouse_click(self):
+        start = (floor(self.mouse_down_start[0] / TS), floor(self.mouse_down_start[1] / TS))
+        end = (floor(self.mouse_down_end[0] / TS), floor(self.mouse_down_end[1] / TS))
+        player = self.players[0]
+        clicked = False
+        for building in player.buildings:
+            building_start = building.coords
+            building_end = (building.coords[0] + building.unit.size, building.coords[1] + building.unit.size)
+            if start[0] >= building_start[0] and \
+                    start[1] >= building_start[1] and \
+                    end[0] <= building_end[0] and \
+                    end[1] <= building_end[1]:
+                clicked = True
+                building.selected = not building.selected
+        self.show_menu = clicked
+        if not clicked:
+            for building in player.buildings:
+                building.selected = False
+            for mob in player.mobs:
+                mob.selected = False
 
     def _draw_scene(self):
         for layer in self.scene:
@@ -48,10 +127,33 @@ class Game:
         pass
 
     def _draw_players(self):
-        pass
+        for player in self.players:
+            for building in player.buildings:
+                surface = building.unit.draw(self.sprites)
+                self.screen.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
+                if building.selected:
+                    pygame.draw.rect(
+                        self.screen,
+                        (255, 255, 255),
+                        (
+                            building.coords[0] * TS,
+                            building.coords[1] * TS,
+                            building.unit.size * TS,
+                            building.unit.size * TS,
+                        ),
+                        1,
+                    )
+            for mob in player.mobs:
+                pass
 
     def _unit_attack(self):
         pass
 
     def _unit_harvest(self):
         pass
+
+    def _draw_menu(self):
+        coords = self.screen.get_size()
+        surface = pygame.Surface([coords[0], MENU_HEIGHT])
+        surface.fill((0, 100, 200))
+        self.screen.blit(surface, (0, coords[1] - MENU_HEIGHT))
