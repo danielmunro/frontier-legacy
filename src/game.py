@@ -160,7 +160,7 @@ class Game:
                 if building.selected:
                     pygame.draw.rect(
                         self.screen,
-                        (255, 255, 255),
+                        Colors.WHITE.value,
                         (
                             building.coords[0] * TS,
                             building.coords[1] * TS,
@@ -175,7 +175,7 @@ class Game:
                 if mob.selected:
                     pygame.draw.rect(
                         self.screen,
-                        (255, 255, 255),
+                        Colors.WHITE.value,
                         (
                             mob.coords[0] * TS,
                             mob.coords[1] * TS,
@@ -194,5 +194,5 @@ class Game:
     def _draw_menu(self):
         coords = self.screen.get_size()
         surface = pygame.Surface([coords[0], MENU_HEIGHT])
-        surface.fill((0, 100, 200))
+        surface.fill(Colors.MENU_BLUE.value)
         self.screen.blit(surface, (0, coords[1] - MENU_HEIGHT))

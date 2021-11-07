@@ -9,3 +9,4 @@ MENU_HEIGHT = 300
 
 class Colors(Enum):
     WHITE = (255, 255, 255)
+    MENU_BLUE = (0, 100, 200)
