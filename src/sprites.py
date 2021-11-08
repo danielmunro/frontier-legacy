@@ -6,8 +6,9 @@ from src.constants import TS
 
 class Spritesheet:
     terrain = []
-    buildings = []
-    mobs = []
+    buildings = {}
+    mobs = {}
+    resources = {}
 
     def __init__(self):
         self.sheet = pygame.image.load("./resources/sprites.png").convert_alpha()

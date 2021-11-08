@@ -7,6 +7,8 @@ from src.building import Building, TownCenter
 from src.constants import TS, MENU_HEIGHT, Colors
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
+from src.resources import Resource
+from src.scene import Scene
 from src.sprites import Spritesheet
 
 
@@ -28,7 +30,7 @@ class Game:
     is_playing = True
     action = None
 
-    def __init__(self, screen, scene, players: list[Player]):
+    def __init__(self, screen, scene: Scene, players: list[Player]):
         self.screen = screen
         self.scene = scene
         self.players = players
@@ -68,6 +70,12 @@ class Game:
                 self.sprites.create(5, 13),
                 self.sprites.create(6, 13),
             ],
+        }
+        self.sprites.resources = {
+            Resource.FOOD: self.sprites.create(6, 6),
+            Resource.GOLD: self.sprites.create(6, 29),
+            Resource.STONE: self.sprites.create(6, 28),
+            Resource.WOOD: self.sprites.create(4, 0),
         }
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
         self.background.fill((0, 0, 0))
@@ -148,11 +156,22 @@ class Game:
         self.mouse_down_end = None
 
     def _draw_scene(self):
-        for layer in self.scene:
-            for y in range(len(layer)):
-                for x in range(len(layer[y])):
-                    index = layer[y][x]
-                    self.background.blit(self.sprites.terrain[index][(x + y) % 2 == 0], (x * TS, y * TS))
+        for y in range(len(self.scene.background)):
+            for x in range(len(self.scene.background[y])):
+                index = self.scene.background[y][x]
+                self.background.blit(self.sprites.terrain[index][(x + y) % 2 == 0], (x * TS, y * TS))
+        for y in range(len(self.scene.resources)):
+            for x in range(len(self.scene.resources[y])):
+                index = self.scene.resources[y][x]
+                resource = None
+                if index == 1:
+                    resource = Resource.WOOD
+                elif index == 2:
+                    resource = Resource.GOLD
+                elif index == 3:
+                    resource = Resource.STONE
+                if resource is not None:
+                    self.background.blit(self.sprites.resources[resource], (x * TS, y * TS))
         self.screen.blit(self.background, (0, 0))
 
     def _unit_move(self, ticks):

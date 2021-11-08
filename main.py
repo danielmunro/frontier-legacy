@@ -6,6 +6,7 @@ from pygame.time import Clock
 from src.constants import SCENE_SIZE, SIZE, FPS_TARGET
 from src.game import Game, Player
 from src.player import get_start_buildings, get_start_mobs
+from src.scene import create_plains, Scene, create_resources
 
 pygame.init()
 pygame.display.set_caption('Frontier Legacy')
@@ -15,13 +16,13 @@ background = pygame.Surface(screen.get_size()).convert_alpha()
 background.fill((0, 0, 0))
 screen.blit(background, (0, 0))
 pygame.display.flip()
-scene = [
-    [[0 for _ in range(SCENE_SIZE[0])] for _ in range(SCENE_SIZE[1])],
-    [[0 for _ in range(SCENE_SIZE[0])] for _ in range(SCENE_SIZE[1])],
-]
 game = Game(
     screen,
-    scene,
+    Scene(
+        create_plains(),
+        [],
+        create_resources(),
+    ),
     [
         Player(
             get_start_mobs(1),
