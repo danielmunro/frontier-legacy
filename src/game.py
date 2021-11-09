@@ -72,7 +72,7 @@ class Game:
             ],
         }
         self.sprites.resources = {
-            Resource.FOOD: self.sprites.create(6, 6),
+            Resource.FOOD: self.sprites.create(0, 44),
             Resource.GOLD: self.sprites.create(6, 29),
             Resource.STONE: self.sprites.create(6, 28),
             Resource.WOOD: self.sprites.create(4, 0),
@@ -170,6 +170,8 @@ class Game:
                     resource = Resource.GOLD
                 elif index == 3:
                     resource = Resource.STONE
+                elif index == 4:
+                    resource = Resource.FOOD
                 if resource is not None:
                     self.background.blit(self.sprites.resources[resource], (x * TS, y * TS))
         self.screen.blit(self.background, (0, 0))
