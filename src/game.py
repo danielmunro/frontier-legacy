@@ -4,12 +4,13 @@ import pygame
 import sys
 
 from src.building import Building, TownCenter
-from src.constants import TS, MENU_HEIGHT, Colors
+from src.constants import TS, MENU_HEIGHT, Colors, Actions
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
 from src.resources import Resource
 from src.scene import Scene
 from src.sprites import Spritesheet
+from src.ui import Button
 
 
 class Player:
@@ -29,11 +30,13 @@ class Game:
     mouse_down_end = None
     is_playing = True
     action = None
+    menu = None
 
-    def __init__(self, screen, scene: Scene, players: list[Player]):
+    def __init__(self, screen, scene: Scene, players: list[Player], font):
         self.screen = screen
         self.scene = scene
         self.players = players
+        self.font = font
         self.sprites = Spritesheet()
         self.sprites.terrain = [
                 [
@@ -111,24 +114,37 @@ class Game:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_m:
-                    self.action = 1
+                    self.action = Actions.MOVE
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_down_start = pygame.mouse.get_pos()
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.mouse_down_end = pygame.mouse.get_pos()
                 self._evaluate_mouse_click()
 
+    def _start_moving_mobs(self, end):
+        for mob in self.players[0].mobs:
+            if mob.selected:
+                mob.move_to = end
+        self.action = None
+        self.mouse_down_start = None
+
     def _evaluate_mouse_click(self):
         _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
         start = (_start[0] / TS, _start[1] / TS)
         end = (_end[0] / TS, _end[1] / TS)
 
-        if self.action == 1:
-            for mob in self.players[0].mobs:
-                if mob.selected:
-                    mob.move_to = end
-            self.action = None
+        if self.action == Actions.MOVE:
+            self._start_moving_mobs(end)
+            return
+
+        coords = self.screen.get_size()
+        m = self.mouse_down_end
+        if self.show_menu and m[1] > coords[1] - MENU_HEIGHT:
             self.mouse_down_start = None
+            self.mouse_down_end = None
+            size = self.move_button.surface.get_size()
+            if 10 < m[0] < size[0] + 10 and 10 < m[1] - (coords[1] - MENU_HEIGHT) < size[1] + 10:
+                self.action = Actions.MOVE
             return
 
         player = self.players[0]
@@ -251,6 +267,16 @@ class Game:
 
     def _draw_menu(self):
         coords = self.screen.get_size()
-        surface = pygame.Surface([coords[0], MENU_HEIGHT])
-        surface.fill(Colors.MENU_BLUE.value)
-        self.screen.blit(surface, (0, coords[1] - MENU_HEIGHT))
+        self.menu = pygame.Surface([coords[0], MENU_HEIGHT])
+        self.menu.fill(Colors.MENU_BLUE.value)
+        self.move_button = self._button("Move Units")
+        self.menu.blit(self.move_button.surface, (10, 10))
+        size = self.move_button.surface.get_size()
+        pygame.draw.rect(self.menu, Colors.WHITE.value, (10, 10, size[0], size[1]), 1)
+        self.screen.blit(self.menu, (0, coords[1] - MENU_HEIGHT))
+
+    def _button(self, label):
+        return Button(
+            self.font,
+            label,
+        )

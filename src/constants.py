@@ -7,6 +7,10 @@ FPS_TARGET = 60
 MENU_HEIGHT = 300
 
 
+class Actions(Enum):
+    MOVE = 1
+
+
 class Colors(Enum):
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
