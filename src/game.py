@@ -75,8 +75,10 @@ class Game:
                     self.action = Actions.MOVE
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_down_start = pygame.mouse.get_pos()
+                self.menu.handle_click_event(self.mouse_down_start)
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.mouse_down_end = pygame.mouse.get_pos()
+                self.menu.reset_ui_elements()
                 self._evaluate_mouse_click()
 
     def _start_moving_mobs(self, end):
@@ -100,10 +102,7 @@ class Game:
         if self.menu.show and m[1] > screen_size[1] - MENU_HEIGHT:
             self.mouse_down_start = None
             self.mouse_down_end = None
-
-            if self.menu.is_click_on_move():
-                print("YES CLICK")
-                self.action = Actions.MOVE
+            self.action = self.menu.map_click_to_action(m)
             return
 
         player = self.players[0]
