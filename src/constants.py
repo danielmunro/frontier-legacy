@@ -5,6 +5,7 @@ SCENE_SIZE = 100, 100
 TS = 16
 FPS_TARGET = 60
 MENU_HEIGHT = 300
+PADDING = 10
 
 
 class Actions(Enum):

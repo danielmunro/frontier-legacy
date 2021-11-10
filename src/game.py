@@ -39,48 +39,6 @@ class Game:
         self.font = font
         self.sprites = Spritesheet()
         self.menu = Menu(font)
-        self.sprites.terrain = [
-                [
-                    self.sprites.create(0, 0),
-                    self.sprites.create(1, 0),
-                ],
-                [
-                    self.sprites.create(2, 0),
-                    self.sprites.create(3, 0),
-                ],
-                [
-                    self.sprites.create(0, 24),
-                    self.sprites.create(1, 24),
-                ],
-                [
-                    self.sprites.create(0, 24),
-                    self.sprites.create(1, 24),
-                ],
-                [
-                    self.sprites.create(2, 24),
-                    self.sprites.create(3, 24),
-                ],
-            ]
-        self.sprites.buildings = {
-            TownCenter.__class__: [
-                self.sprites.create(2, 7),
-                self.sprites.create(3, 7),
-                self.sprites.create(2, 8),
-                self.sprites.create(3, 8),
-            ],
-        }
-        self.sprites.mobs = {
-            Villager.__class__: [
-                self.sprites.create(5, 13),
-                self.sprites.create(6, 13),
-            ],
-        }
-        self.sprites.resources = {
-            Resource.FOOD: self.sprites.create(0, 44),
-            Resource.GOLD: self.sprites.create(6, 29),
-            Resource.STONE: self.sprites.create(6, 28),
-            Resource.WOOD: self.sprites.create(4, 0),
-        }
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
         self.background.fill((0, 0, 0))
 

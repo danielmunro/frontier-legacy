@@ -7,6 +7,7 @@ from src.constants import SIZE, FPS_TARGET, Colors
 from src.game import Game, Player
 from src.player import get_start_buildings, get_start_mobs
 from src.scene import create_plains, Scene, create_resources
+from src.sprite_initializer import initialize_sprites
 
 pygame.init()
 pygame.display.set_caption('Frontier Legacy')
@@ -39,6 +40,7 @@ game = Game(
     ],
     font,
 )
+initialize_sprites(game.sprites)
 
 # Event loop
 while game.is_playing:
