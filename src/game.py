@@ -4,7 +4,7 @@ import pygame
 import sys
 
 from src.building import Building, TownCenter
-from src.constants import TS, MENU_HEIGHT, Colors, Actions
+from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
 from src.resources import Resource
@@ -97,9 +97,8 @@ class Game:
             self._start_moving_mobs(end)
             return
 
-        screen_size = self.screen.get_size()
         m = self.mouse_down_end
-        if self.menu.show and m[1] > screen_size[1] - MENU_HEIGHT:
+        if self.menu.show and m[1] > HEIGHT - MENU_HEIGHT:
             self.mouse_down_start = None
             self.mouse_down_end = None
             self.action = self.menu.map_click_to_action(m)
