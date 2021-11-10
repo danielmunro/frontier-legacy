@@ -10,7 +10,7 @@ from src.mouse import get_abs_mouse
 from src.resources import Resource
 from src.scene import Scene
 from src.sprites import Spritesheet
-from src.ui import Button
+from src.ui import Button, Menu
 
 
 class Player:
@@ -38,6 +38,7 @@ class Game:
         self.players = players
         self.font = font
         self.sprites = Spritesheet()
+        self.menu = Menu(font)
         self.sprites.terrain = [
                 [
                     self.sprites.create(0, 0),
@@ -82,7 +83,6 @@ class Game:
         }
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
         self.background.fill((0, 0, 0))
-        self.show_menu = False
 
     def loop(self, ticks):
         self._handle_events()
@@ -92,7 +92,7 @@ class Game:
         self._draw_scene()
         self._draw_players()
         self._draw_mouse_border()
-        if self.show_menu:
+        if self.menu.show:
             self._draw_menu()
 
     def _draw_mouse_border(self):
@@ -137,13 +137,14 @@ class Game:
             self._start_moving_mobs(end)
             return
 
-        coords = self.screen.get_size()
+        screen_size = self.screen.get_size()
         m = self.mouse_down_end
-        if self.show_menu and m[1] > coords[1] - MENU_HEIGHT:
+        if self.menu.show and m[1] > screen_size[1] - MENU_HEIGHT:
             self.mouse_down_start = None
             self.mouse_down_end = None
-            size = self.move_button.surface.get_size()
-            if 10 < m[0] < size[0] + 10 and 10 < m[1] - (coords[1] - MENU_HEIGHT) < size[1] + 10:
+
+            if self.menu.is_click_on_move():
+                print("YES CLICK")
                 self.action = Actions.MOVE
             return
 
@@ -167,7 +168,7 @@ class Game:
                     floor(start[1]) <= mob.coords[1] <= floor(end[1]):
                 clicked = True
                 mob.selected = not mob.selected
-        self.show_menu = clicked
+        self.menu.show = clicked
         self.mouse_down_start = None
         self.mouse_down_end = None
 
@@ -267,13 +268,8 @@ class Game:
 
     def _draw_menu(self):
         coords = self.screen.get_size()
-        self.menu = pygame.Surface([coords[0], MENU_HEIGHT])
-        self.menu.fill(Colors.MENU_BLUE.value)
-        self.move_button = self._button("Move Units")
-        self.menu.blit(self.move_button.surface, (10, 10))
-        size = self.move_button.surface.get_size()
-        pygame.draw.rect(self.menu, Colors.WHITE.value, (10, 10, size[0], size[1]), 1)
-        self.screen.blit(self.menu, (0, coords[1] - MENU_HEIGHT))
+        self.menu.redraw()
+        self.screen.blit(self.menu.surface, (0, coords[1] - MENU_HEIGHT))
 
     def _button(self, label):
         return Button(
