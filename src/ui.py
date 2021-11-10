@@ -8,6 +8,8 @@ class Menu:
     def __init__(self, font):
         self.font = font
         self.move_button = Button(font, "Move")
+        self.gather_button = Button(font, "Gather")
+        self.attack_button = Button(font, "Attack")
         self.show = False
         coords = pygame.display.get_window_size()
         self.surface = Surface([coords[0], MENU_HEIGHT])
@@ -32,9 +34,10 @@ class Menu:
     def redraw(self):
         self.surface.fill(Colors.MENU_BLUE.value)
         self.move_button.render_button()
+        button_height = self.move_button.surface.get_height()
         self.surface.blit(self.move_button.surface, (PADDING, PADDING))
-        size = self.move_button.surface.get_size()
-        pygame.draw.rect(self.surface, Colors.WHITE.value, (PADDING, PADDING, size[0], size[1]), 1)
+        self.surface.blit(self.gather_button.render_button(), (PADDING, PADDING + button_height))
+        self.surface.blit(self.attack_button.render_button(), (PADDING, PADDING + (button_height * 2)))
 
 
 class Button:
@@ -43,11 +46,13 @@ class Button:
         self.label = label
         self.is_button_pressed = False
         rendered = self._render_text()
-        sz = rendered.get_size()
-        self.surface = Surface([sz[0] + (PADDING * 2), sz[1] + (PADDING * 2)])
+        self.size = rendered.get_size()
+        self.surface = Surface([self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)])
 
     def render_button(self):
         self.surface.blit(self._render_text(), (PADDING, PADDING))
+        pygame.draw.rect(self.surface, Colors.WHITE.value, (0, 0, self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)), 1)
+        return self.surface
 
     def _render_text(self):
         return self.font.render(
