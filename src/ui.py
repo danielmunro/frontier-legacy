@@ -17,7 +17,6 @@ def create_buttons(font):
 
 class Menu:
     def __init__(self, font):
-        print("new menu")
         self.font = font
         self.buttons = create_buttons(font)
         self.show = False
