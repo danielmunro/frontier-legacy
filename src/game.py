@@ -92,16 +92,16 @@ class Game:
         _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
         start = (_start[0] / TS, _start[1] / TS)
         end = (_end[0] / TS, _end[1] / TS)
-
-        if self.action == Actions.MOVE:
-            self._start_moving_mobs(end)
-            return
-
         m = self.mouse_down_end
+
         if self.menu.show and m[1] > HEIGHT - MENU_HEIGHT:
             self.mouse_down_start = None
             self.mouse_down_end = None
             self.action = self.menu.map_click_to_action(m)
+            return
+
+        if self.action == Actions.MOVE:
+            self._start_moving_mobs(end)
             return
 
         player = self.players[0]

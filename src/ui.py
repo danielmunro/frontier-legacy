@@ -1,7 +1,7 @@
 import pygame.display
 from pygame import Surface
 
-from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions
+from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, BUTTON_HEIGHT
 
 
 def create_buttons(font):
@@ -12,6 +12,11 @@ def create_buttons(font):
         Actions.HARVEST: Button(font, "Harvest"),
         Actions.BUILD: Button(font, "Build"),
         Actions.REPAIR: Button(font, "Repair"),
+        Actions.GARRISON: Button(font, "Garrison"),
+        Actions.BUILD_HOUSE: Button(font, "House"),
+        Actions.BUILD_LUMBER_MILL: Button(font, "Lumber Mill"),
+        Actions.BUILD_MILL: Button(font, "Mill"),
+        Actions.BUILD_BARRACKS: Button(font, "Barracks"),
     }
 
 
@@ -29,8 +34,8 @@ class Menu:
                 b.is_button_pressed = True
 
     def map_click_to_action(self, pos):
-        for k in self.buttons.keys():
-            if self.buttons[k] and self._is_click_on_button(self.buttons[k], pos):
+        for k in self.buttons:
+            if self._is_click_on_button(self.buttons[k], pos):
                 return k
 
     def reset_ui_elements(self):
@@ -40,23 +45,34 @@ class Menu:
     @staticmethod
     def _is_click_on_button(button, pos):
         button_size = button.surface.get_size()
-        return PADDING < pos[0] < button_size[0] + PADDING and \
-            PADDING < pos[1] - (HEIGHT - MENU_HEIGHT) < button_size[1] + PADDING
+        return button.coords[0] < pos[0] < button_size[0] + button.coords[0] and \
+            button.coords[1] < pos[1] - (HEIGHT - MENU_HEIGHT) < button_size[1] + button.coords[1]
 
     def redraw(self):
         pass
+
+    def draw_button(self, button, x, y):
+        surface = button.render_button()
+        height = surface.get_height()
+        self.surface.blit(surface,
+                          (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y)))
+        button.coords = (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y))
 
 
 class VillagerMenu(Menu):
     def redraw(self):
         self.surface.fill(Colors.MENU_BLUE.value)
-        button = self.buttons[Actions.MOVE]
-        button.render_button()
-        # button_height = button.surface.get_height()
-        self.surface.blit(button.surface, (PADDING, PADDING))
-        # self.surface.blit(self.buttons[Actions.HARVEST].render_button(), (PADDING, PADDING + button_height))
-        # self.surface.blit(self.buttons[Actions.BUILD].render_button(), (PADDING, PADDING + (button_height * 2)))
-        # self.surface.blit(self.buttons[Actions.ATTACK].render_button(), (PADDING, PADDING + (button_height * 2)))
+
+        self.draw_button(self.buttons[Actions.BUILD_HOUSE], 2, 0)
+        self.draw_button(self.buttons[Actions.BUILD_LUMBER_MILL], 2, 1)
+        self.draw_button(self.buttons[Actions.BUILD_MILL], 2, 2)
+        self.draw_button(self.buttons[Actions.BUILD_BARRACKS], 2, 3)
+
+        self.draw_button(self.buttons[Actions.MOVE], 3, 0)
+        self.draw_button(self.buttons[Actions.HARVEST], 3, 1)
+        self.draw_button(self.buttons[Actions.BUILD], 3, 2)
+        self.draw_button(self.buttons[Actions.ATTACK], 3, 3)
+        self.draw_button(self.buttons[Actions.GARRISON], 3, 4)
 
 
 class Button:
@@ -67,6 +83,7 @@ class Button:
         rendered = self._render_text()
         self.size = rendered.get_size()
         self.surface = Surface([self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)])
+        self.coords = (0, 0)
 
     def render_button(self):
         self.surface.blit(self._render_text(), (PADDING, PADDING))
