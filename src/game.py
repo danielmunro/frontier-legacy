@@ -10,7 +10,7 @@ from src.mouse import get_abs_mouse
 from src.resources import Resource
 from src.scene import Scene
 from src.sprites import Spritesheet
-from src.ui import Button, Menu
+from src.ui import Button, VillagerMenu
 
 
 class Player:
@@ -38,7 +38,7 @@ class Game:
         self.players = players
         self.font = font
         self.sprites = Spritesheet()
-        self.menu = Menu(font)
+        self.menu = VillagerMenu(font)
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
         self.background.fill((0, 0, 0))
 

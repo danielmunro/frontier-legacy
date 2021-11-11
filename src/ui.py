@@ -4,26 +4,39 @@ from pygame import Surface
 from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions
 
 
+def create_buttons(font):
+    return {
+        Actions.MOVE: Button(font, "Move"),
+        Actions.ATTACK_MOVE: Button(font, "Attack Move"),
+        Actions.ATTACK: Button(font, "Attack"),
+        Actions.HARVEST: Button(font, "Harvest"),
+        Actions.BUILD: Button(font, "Build"),
+        Actions.REPAIR: Button(font, "Repair"),
+    }
+
+
 class Menu:
     def __init__(self, font):
+        print("new menu")
         self.font = font
-        self.move_button = Button(font, "Move")
-        self.gather_button = Button(font, "Gather")
-        self.attack_button = Button(font, "Attack")
+        self.buttons = create_buttons(font)
         self.show = False
         coords = pygame.display.get_window_size()
         self.surface = Surface([coords[0], MENU_HEIGHT])
 
     def handle_click_event(self, pos):
-        if self._is_click_on_button(self.move_button, pos):
-            self.move_button.is_button_pressed = True
+        for b in self.buttons.values():
+            if self._is_click_on_button(b, pos):
+                b.is_button_pressed = True
 
     def map_click_to_action(self, pos):
-        if self._is_click_on_button(self.move_button, pos):
-            return Actions.MOVE
+        for k in self.buttons.keys():
+            if self.buttons[k] and self._is_click_on_button(self.buttons[k], pos):
+                return k
 
     def reset_ui_elements(self):
-        self.move_button.is_button_pressed = False
+        for b in self.buttons.values():
+            b.is_button_pressed = False
 
     @staticmethod
     def _is_click_on_button(button, pos):
@@ -32,12 +45,19 @@ class Menu:
             PADDING < pos[1] - (HEIGHT - MENU_HEIGHT) < button_size[1] + PADDING
 
     def redraw(self):
+        pass
+
+
+class VillagerMenu(Menu):
+    def redraw(self):
         self.surface.fill(Colors.MENU_BLUE.value)
-        self.move_button.render_button()
-        button_height = self.move_button.surface.get_height()
-        self.surface.blit(self.move_button.surface, (PADDING, PADDING))
-        self.surface.blit(self.gather_button.render_button(), (PADDING, PADDING + button_height))
-        self.surface.blit(self.attack_button.render_button(), (PADDING, PADDING + (button_height * 2)))
+        button = self.buttons[Actions.MOVE]
+        button.render_button()
+        # button_height = button.surface.get_height()
+        self.surface.blit(button.surface, (PADDING, PADDING))
+        # self.surface.blit(self.buttons[Actions.HARVEST].render_button(), (PADDING, PADDING + button_height))
+        # self.surface.blit(self.buttons[Actions.BUILD].render_button(), (PADDING, PADDING + (button_height * 2)))
+        # self.surface.blit(self.buttons[Actions.ATTACK].render_button(), (PADDING, PADDING + (button_height * 2)))
 
 
 class Button:
