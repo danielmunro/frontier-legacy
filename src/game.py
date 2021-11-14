@@ -161,7 +161,7 @@ class Game:
                     if tick_diff > mob.unit.movement_speed:
                         amount = floor(tick_diff / mob.unit.movement_speed)
                     else:
-                        amount = 0
+                        return
                     if x < 0:
                         amount_x = -amount
                     elif x > 0:
