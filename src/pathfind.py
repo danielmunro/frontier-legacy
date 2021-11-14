@@ -1,5 +1,7 @@
 from src.scene import Scene
-import sys
+
+
+MAX_COST_GUARD = 1000
 
 
 class Node:
@@ -17,7 +19,8 @@ class Node:
 def get_path(scene: Scene, start, end):
     cost = 0
     known_nodes = [Node(start, cost)]
-    while True:
+    this_move = None
+    while cost < MAX_COST_GUARD:
         unvisited = list(filter(lambda i: not i.visited, known_nodes))
         sorted(unvisited, key=lambda i: i.cost)
         this_move = unvisited[0]
