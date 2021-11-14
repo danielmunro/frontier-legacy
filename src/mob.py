@@ -177,6 +177,7 @@ class Mob:
     selected = False
     move_to = None
     last_move_ticks = None
+    path = None
 
     def __init__(self, unit: MobUnit, coords):
         self.unit = unit

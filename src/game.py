@@ -1,4 +1,4 @@
-from math import floor
+from math import floor, ceil
 
 import pygame
 import sys
@@ -7,10 +7,14 @@ from src.building import Building, TownCenter
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
+from src.pathfind import get_path
 from src.resources import Resource
 from src.scene import Scene
 from src.sprites import Spritesheet
 from src.ui import Button, VillagerMenu
+
+
+# sys.setrecursionlimit(10000)
 
 
 class Player:
@@ -84,7 +88,7 @@ class Game:
     def _start_moving_mobs(self, end):
         for mob in self.players[0].mobs:
             if mob.selected:
-                mob.move_to = end
+                mob.move_to = (floor(end[0]), floor(end[1]))
         self.action = None
         self.mouse_down_start = None
 
@@ -153,32 +157,17 @@ class Game:
         for player in self.players:
             for mob in player.mobs:
                 if mob.move_to:
-                    x = floor(mob.move_to[0] - mob.coords[0])
-                    y = floor(mob.move_to[1] - mob.coords[1])
                     if mob.last_move_ticks is None:
                         mob.last_move_ticks = ticks
                     tick_diff = ticks - mob.last_move_ticks
-                    if tick_diff > mob.unit.movement_speed:
-                        amount = floor(tick_diff / mob.unit.movement_speed)
-                    else:
+                    if tick_diff < mob.unit.movement_speed:
                         return
-                    if x < 0:
-                        amount_x = -amount
-                    elif x > 0:
-                        amount_x = amount
-                    else:
-                        amount_x = 0
-                    if y < 0:
-                        amount_y = -amount
-                    elif y > 0:
-                        amount_y = amount
-                    else:
-                        amount_y = 0
-                    coords_x = mob.coords[0] + amount_x
-                    coords_y = mob.coords[1] + amount_y
-                    mob.coords = (coords_x, coords_y)
+                    if not mob.path:
+                        mob.path = get_path(self.scene, mob.coords, mob.move_to)
+                    move_to = mob.path.pop()
+                    mob.coords = move_to
                     mob.last_move_ticks = ticks
-                    if mob.move_to[0] == coords_x and mob.move_to[1] == coords_y:
+                    if mob.move_to[0] == move_to[0] and mob.move_to[1] == move_to[1]:
                         mob.move_to = None
                         mob.last_move_ticks = None
 
