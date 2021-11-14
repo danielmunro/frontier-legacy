@@ -9,6 +9,11 @@ class Scene:
         self.blocking = blocking
         self.resources = resources
 
+    def is_passable(self, coords):
+        x = coords[0]
+        y = coords[1]
+        return self.resources[y][x] == 0 and self.blocking[y][x] == 0
+
 
 def create_plains():
     return [[0 if random() < 0.9 else 1 for _ in range(SCENE_SIZE[0])] for _ in range(SCENE_SIZE[1])]
