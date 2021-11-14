@@ -177,8 +177,7 @@ class Game:
                     coords_x = mob.coords[0] + amount_x
                     coords_y = mob.coords[1] + amount_y
                     mob.coords = (coords_x, coords_y)
-                    if amount > 0:
-                        mob.last_move_ticks = ticks
+                    mob.last_move_ticks = ticks
                     if mob.move_to[0] == coords_x and mob.move_to[1] == coords_y:
                         mob.move_to = None
                         mob.last_move_ticks = None
