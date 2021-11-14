@@ -42,6 +42,8 @@ def get_path(scene: Scene, start, end):
                 elif cost < found[0].cost:
                     found[0].cost = cost
         cost += 1
+    if this_move.coords != end:
+        return []
     path = []
     while this_move:
         path.append(this_move.coords)
