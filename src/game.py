@@ -161,7 +161,7 @@ class Game:
                         mob.last_move_ticks = ticks
                     tick_diff = ticks - mob.last_move_ticks
                     if tick_diff < mob.unit.movement_speed:
-                        return
+                        continue
                     if not mob.path:
                         mob.path = get_path(self.scene, mob.coords, mob.move_to)
                     move_to = mob.path.pop()
