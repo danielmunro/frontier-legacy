@@ -4,7 +4,7 @@ import pygame
 import sys
 
 from src.building import Building, TownCenter
-from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT
+from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
@@ -36,13 +36,14 @@ class Game:
     action = None
     menu = None
 
-    def __init__(self, screen, scene: Scene, players: list[Player], font):
+    def __init__(self, screen, scene: Scene, players: list[Player]):
         self.screen = screen
         self.scene = scene
         self.players = players
-        self.font = font
+        self.button_font = pygame.font.Font('freesansbold.ttf', 24)
+        self.number_font = pygame.font.Font('freesansbold.ttf', 12)
         self.sprites = Spritesheet()
-        self.menu = VillagerMenu(font)
+        self.menu = VillagerMenu(self.button_font)
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
         self.background.fill((0, 0, 0))
 
@@ -232,10 +233,28 @@ class Game:
     def _draw_menu(self):
         coords = self.screen.get_size()
         self.menu.redraw()
+        self._draw_selected()
         self.screen.blit(self.menu.surface, (0, coords[1] - MENU_HEIGHT))
+
+    def _draw_selected(self):
+        mobs = {}
+        for mob in self.players[0].mobs:
+            if mob.selected:
+                if mob.unit.__class__ not in mobs:
+                    mobs[mob.unit.__class__] = {"mob": mob.unit, "count": 0}
+                mobs[mob.unit.__class__]["count"] += 1
+        offset_x = 0
+        for mob in mobs.keys():
+            s = mobs[mob]["mob"].draw(self.sprites)
+            self.menu.surface.blit(s, (offset_x * TS, PADDING))
+            self.menu.surface.blit(
+                self.number_font.render(str(mobs[mob]["count"]), True, Colors.WHITE.value),
+                ((offset_x * TS) + TS, PADDING + 4),
+            )
+            offset_x += 2
 
     def _button(self, label):
         return Button(
-            self.font,
+            self.button_font,
             label,
         )

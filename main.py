@@ -19,7 +19,6 @@ screen.blit(background, (0, 0))
 pygame.display.flip()
 player1_start = 10, 10
 player2_start = 50, 40
-font = pygame.font.Font('freesansbold.ttf', 24)
 game = Game(
     screen,
     Scene(
@@ -38,7 +37,6 @@ game = Game(
             get_start_buildings(player2_start),
         ),
     ],
-    font,
 )
 initialize_sprites(game.sprites)
 
