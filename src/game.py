@@ -167,7 +167,7 @@ class Game:
                     move_to = mob.path.pop()
                     mob.coords = move_to
                     mob.last_move_ticks = ticks
-                    if mob.move_to[0] == move_to[0] and mob.move_to[1] == move_to[1]:
+                    if mob.move_to == move_to:
                         mob.move_to = None
                         mob.last_move_ticks = None
 
