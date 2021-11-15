@@ -16,6 +16,15 @@ class Node:
         self.previous = previous
 
 
+def create_neighbors(coords):
+    return [
+        (coords[0] - 1, coords[1]),
+        (coords[0] + 1, coords[1]),
+        (coords[0], coords[1] - 1),
+        (coords[0], coords[1] + 1),
+    ]
+
+
 def get_path(scene: Scene, start, end):
     cost = 0
     known_nodes = [Node(start, cost)]
@@ -27,12 +36,7 @@ def get_path(scene: Scene, start, end):
         this_move.visited = True
         if this_move.coords == end:
             break
-        neighbor_coords = [
-            (this_move.coords[0] - 1, this_move.coords[1]),
-            (this_move.coords[0] + 1, this_move.coords[1]),
-            (this_move.coords[0], this_move.coords[1] - 1),
-            (this_move.coords[0], this_move.coords[1] + 1),
-        ]
+        neighbor_coords = create_neighbors(this_move.coords)
         for neighbor_coord in neighbor_coords:
             if 0 < neighbor_coord[0] < len(scene.resources[0]) and 0 < neighbor_coord[1] < len(scene.resources) and \
                     scene.is_passable(neighbor_coord):

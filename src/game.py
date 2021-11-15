@@ -7,7 +7,7 @@ from src.building import Building, TownCenter
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
-from src.pathfind import get_path
+from src.pathfind import get_path, create_neighbors
 from src.resources import Resource
 from src.scene import Scene
 from src.sprites import Spritesheet
@@ -154,6 +154,7 @@ class Game:
         self.screen.blit(self.background, (0, 0))
 
     def _unit_move(self, ticks):
+        stationed = {}
         for player in self.players:
             for mob in player.mobs:
                 if mob.move_to:
@@ -165,11 +166,31 @@ class Game:
                     if not mob.path:
                         mob.path = get_path(self.scene, mob.coords, mob.move_to)
                     move_to = mob.path.pop()
+                    if not self._is_passable(move_to):
+                        mob.move_to = None
+                        continue
                     mob.coords = move_to
                     mob.last_move_ticks = ticks
                     if mob.move_to == move_to:
                         mob.move_to = None
                         mob.last_move_ticks = None
+                elif mob.coords in stationed:
+                    neighbors = create_neighbors(mob.coords)
+                    for neighbor in neighbors:
+                        if 0 < neighbor[0] < len(self.scene.resources[0]) and \
+                                0 < neighbor[1] < len(self.scene.resources) and \
+                                self.scene.is_passable(neighbor) and neighbor not in stationed:
+                            mob.move_to = neighbor
+                            mob.last_move_ticks = ticks
+                else:
+                    stationed[mob.coords] = 1
+
+    def _is_passable(self, coords):
+        for player in self.players:
+            for mob in player.mobs:
+                if mob.move_to is None and mob.coords == coords:
+                    return False
+        return True
 
     def _draw_players(self):
         for player in self.players:
