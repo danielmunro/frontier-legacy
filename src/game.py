@@ -177,9 +177,7 @@ class Game:
                 elif mob.coords in stationed:
                     neighbors = create_neighbors(mob.coords)
                     for neighbor in neighbors:
-                        if 0 < neighbor[0] < len(self.scene.resources[0]) and \
-                                0 < neighbor[1] < len(self.scene.resources) and \
-                                self.scene.is_passable(neighbor) and neighbor not in stationed:
+                        if self.scene.is_passable(neighbor) and neighbor not in stationed:
                             mob.move_to = neighbor
                             mob.last_move_ticks = ticks
                 else:

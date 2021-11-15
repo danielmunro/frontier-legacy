@@ -12,7 +12,7 @@ class Scene:
     def is_passable(self, coords):
         x = coords[0]
         y = coords[1]
-        return self.resources[y][x] == 0  # and self.blocking[y][x] == 0
+        return 0 < x < len(self.resources[0]) and 0 < y < len(self.resources) and self.resources[y][x] == 0
 
 
 def create_plains():

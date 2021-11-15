@@ -38,8 +38,7 @@ def get_path(scene: Scene, start, end):
             break
         neighbor_coords = create_neighbors(this_move.coords)
         for neighbor_coord in neighbor_coords:
-            if 0 < neighbor_coord[0] < len(scene.resources[0]) and 0 < neighbor_coord[1] < len(scene.resources) and \
-                    scene.is_passable(neighbor_coord):
+            if scene.is_passable(neighbor_coord):
                 found = list(filter(lambda i: i.coords == neighbor_coord, known_nodes))
                 if len(found) == 0:
                     known_nodes.append(Node(neighbor_coord, cost, this_move))
