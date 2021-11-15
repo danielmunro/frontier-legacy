@@ -25,7 +25,7 @@ def create_neighbors(coords):
     ]
 
 
-def get_path(scene: Scene, start, end):
+def get_path(game, start, end):
     cost = 0
     known_nodes = [Node(start, cost)]
     this_move = None
@@ -38,7 +38,7 @@ def get_path(scene: Scene, start, end):
             break
         neighbor_coords = create_neighbors(this_move.coords)
         for neighbor_coord in neighbor_coords:
-            if scene.is_passable(neighbor_coord):
+            if game.is_passable(neighbor_coord):
                 found = list(filter(lambda i: i.coords == neighbor_coord, known_nodes))
                 if len(found) == 0:
                     known_nodes.append(Node(neighbor_coord, cost, this_move))

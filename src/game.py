@@ -3,7 +3,7 @@ from math import floor, ceil
 import pygame
 import sys
 
-from src.building import Building, TownCenter
+from src.building import Building, TownCenter, House
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
@@ -93,6 +93,14 @@ class Game:
         self.action = None
         self.mouse_down_start = None
 
+    def _villager_build(self, end):
+        for mob in self.players[0].mobs:
+            if mob.selected:
+                mob.move_to = (floor(end[0]), floor(end[1]))
+                mob.to_build = self.action
+        self.action = None
+        self.mouse_down_start = None
+
     def _evaluate_mouse_click(self):
         _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
         start = (_start[0] / TS, _start[1] / TS)
@@ -107,6 +115,10 @@ class Game:
 
         if self.action == Actions.MOVE:
             self._start_moving_mobs(end)
+            return
+
+        if self.action == Actions.BUILD_HOUSE:
+            self._villager_build(end)
             return
 
         player = self.players[0]
@@ -165,31 +177,36 @@ class Game:
                     if tick_diff < mob.unit.movement_speed:
                         continue
                     if not mob.path:
-                        mob.path = get_path(self.scene, mob.coords, mob.move_to)
+                        mob.path = get_path(self, mob.coords, mob.move_to)
                     move_to = mob.path.pop()
-                    if not self._is_passable(move_to):
-                        mob.move_to = None
+                    if not self.is_passable(move_to):
+                        mob.reset()
                         continue
                     mob.coords = move_to
                     mob.last_move_ticks = ticks
-                    if mob.move_to == move_to:
-                        mob.move_to = None
-                        mob.last_move_ticks = None
+                    if len(mob.path) == 1 and mob.to_build:
+                        self.players[0].buildings.append(Building(House(), mob.path[0]))
+                        mob.reset()
+                    elif mob.move_to == move_to:
+                        mob.reset()
                 elif mob.coords in stationed:
                     neighbors = create_neighbors(mob.coords)
                     for neighbor in neighbors:
-                        if self.scene.is_passable(neighbor) and neighbor not in stationed:
+                        if self.is_passable(neighbor) and neighbor not in stationed:
                             mob.move_to = neighbor
                             mob.last_move_ticks = ticks
                 else:
                     stationed[mob.coords] = 1
 
-    def _is_passable(self, coords):
+    def is_passable(self, coords):
         for player in self.players:
             for mob in player.mobs:
                 if mob.move_to is None and mob.coords == coords:
                     return False
-        return True
+            for building in player.buildings:
+                if building.coords == coords:
+                    return False
+        return self.scene.is_passable(coords)
 
     def _draw_players(self):
         for player in self.players:

@@ -178,9 +178,15 @@ class Mob:
     move_to = None
     last_move_ticks = None
     path = None
+    to_build = None
 
     def __init__(self, unit: MobUnit, coords):
         self.unit = unit
         self.hp = unit.hp
         self.coords = coords
 
+    def reset(self):
+        self.move_to = None
+        self.last_move_ticks = None
+        self.path = None
+        self.to_build = None

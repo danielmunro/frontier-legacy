@@ -38,10 +38,29 @@ class TownCenter(BuildingUnit):
 
     def draw(self, sprites: Spritesheet):
         surface = pygame.Surface([TS * 2, TS * 2]).convert_alpha()
-        surface.blit(sprites.buildings[TownCenter.__class__][0], (0, 0))
-        surface.blit(sprites.buildings[TownCenter.__class__][1], (TS, 0))
-        surface.blit(sprites.buildings[TownCenter.__class__][2], (0, TS))
-        surface.blit(sprites.buildings[TownCenter.__class__][3], (TS, TS))
+        surface.blit(sprites.buildings[TownCenter][0], (0, 0))
+        surface.blit(sprites.buildings[TownCenter][1], (TS, 0))
+        surface.blit(sprites.buildings[TownCenter][2], (0, TS))
+        surface.blit(sprites.buildings[TownCenter][3], (TS, TS))
+        return surface
+
+
+class House(BuildingUnit):
+    def __init__(self):
+        super().__init__(
+            800,
+            0,
+            60,
+            Costs(0, 50, 0, 0),
+            1
+        )
+
+    def trains(self) -> list[MobUnit]:
+        return []
+
+    def draw(self, sprites: Spritesheet):
+        surface = pygame.Surface([TS * 2, TS * 2]).convert_alpha()
+        surface.blit(sprites.buildings[House][0], (0, 0))
         return surface
 
 
