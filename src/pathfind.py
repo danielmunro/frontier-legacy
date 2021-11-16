@@ -49,7 +49,7 @@ def get_path(game, start, end):
         return []
     path = []
     while this_move:
-        path.append(this_move.coords)
+        if this_move.coords != start:
+            path.append(this_move.coords)
         this_move = this_move.previous
-    reversed(path)
-    return path
+    return list(reversed(path))

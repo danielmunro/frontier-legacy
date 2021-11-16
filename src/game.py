@@ -178,9 +178,11 @@ class Game:
                         continue
                     if not mob.path:
                         mob.path = get_path(self, mob.coords, mob.move_to)
-                    move_to = mob.path.pop()
+                    move_to = mob.path.pop(0)
                     if not self.is_passable(move_to):
                         mob.reset()
+                        if mob.coords in stationed:
+                            self._move_mob_disperse(mob, stationed, ticks)
                         continue
                     mob.coords = move_to
                     mob.last_move_ticks = ticks
@@ -190,13 +192,17 @@ class Game:
                     elif mob.move_to == move_to:
                         mob.reset()
                 elif mob.coords in stationed:
-                    neighbors = create_neighbors(mob.coords)
-                    for neighbor in neighbors:
-                        if self.is_passable(neighbor) and neighbor not in stationed:
-                            mob.move_to = neighbor
-                            mob.last_move_ticks = ticks
+                    self._move_mob_disperse(mob, stationed, ticks)
                 else:
                     stationed[mob.coords] = 1
+
+    def _move_mob_disperse(self, mob, stationed, ticks):
+        neighbors = create_neighbors(mob.coords)
+        for neighbor in neighbors:
+            if self.is_passable(neighbor) and neighbor not in stationed:
+                mob.move_to = neighbor
+                mob.last_move_ticks = ticks
+                return
 
     def is_passable(self, coords):
         for player in self.players:
