@@ -1,4 +1,4 @@
-from math import floor, ceil
+from math import floor, ceil, sqrt
 
 import pygame
 import sys
@@ -94,9 +94,11 @@ class Game:
         self.mouse_down_start = None
 
     def _villager_build(self, end):
+        end = (floor(end[0]), floor(end[1]))
+        self.players[0].buildings.append(Building(House(), end))
         for mob in self.players[0].mobs:
             if mob.selected:
-                mob.move_to = (floor(end[0]), floor(end[1]))
+                mob.move_to = self._nearest_available_neighbor(mob.coords, end)
                 mob.to_build = self.action
         self.action = None
         self.mouse_down_start = None
@@ -186,19 +188,28 @@ class Game:
                         continue
                     mob.coords = move_to
                     mob.last_move_ticks = ticks
-                    if len(mob.path) == 1 and mob.to_build:
-                        self.players[0].buildings.append(Building(House(), mob.path[0]))
-                        mob.reset()
-                    elif mob.move_to == move_to:
+                    if mob.move_to == move_to:
                         mob.reset()
                 elif mob.coords in stationed:
                     self._move_mob_disperse(mob, stationed, ticks)
                 else:
                     stationed[mob.coords] = 1
 
+    def _nearest_available_neighbor(self, from_coords, to_coords):
+        least_cost = None
+        nearest_neighbor = None
+        for neighbor in create_neighbors(to_coords):
+            if self.is_passable(neighbor):
+                cost = sqrt(pow(neighbor[0] - from_coords[0], 2) + pow(neighbor[1] - from_coords[1], 2))
+                if least_cost is None or cost < least_cost:
+                    least_cost = cost
+                    nearest_neighbor = neighbor
+        return nearest_neighbor
+
+
+
     def _move_mob_disperse(self, mob, stationed, ticks):
-        neighbors = create_neighbors(mob.coords)
-        for neighbor in neighbors:
+        for neighbor in create_neighbors(mob.coords):
             if self.is_passable(neighbor) and neighbor not in stationed:
                 mob.move_to = neighbor
                 mob.last_move_ticks = ticks
@@ -218,6 +229,8 @@ class Game:
         for player in self.players:
             for building in player.buildings:
                 surface = building.unit.draw(self.sprites)
+                if not building.built:
+                    surface.set_alpha(28 + building.built_amount)
                 self.screen.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
                 if building.selected:
                     pygame.draw.rect(

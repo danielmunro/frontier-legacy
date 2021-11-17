@@ -81,6 +81,8 @@ class Saloon(BuildingUnit):
 
 class Building:
     selected = False
+    built = False
+    built_amount = 0
 
     def __init__(self, unit: BuildingUnit, coords):
         self.unit = unit

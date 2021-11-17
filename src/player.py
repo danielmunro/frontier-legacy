@@ -3,8 +3,10 @@ from src.mob import Mob, Villager
 
 
 def get_start_buildings(coords):
+    tc = Building(TownCenter(), coords)
+    tc.built = True
     return [
-        Building(TownCenter(), coords),
+        tc,
     ]
 
 
