@@ -189,4 +189,3 @@ class Mob:
         self.move_to = None
         self.last_move_ticks = None
         self.path = None
-        self.to_build = None

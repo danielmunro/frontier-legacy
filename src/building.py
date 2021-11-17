@@ -1,17 +1,18 @@
 import pygame
 
-from src.constants import TS
+from src.constants import TS, Actions
 from src.mob import MobUnit, Villager, Ruffian
 from src.resources import Costs
 from src.sprites import Spritesheet
 
 
 class BuildingUnit:
-    def __init__(self, hp, defense, build_time, costs, size=1):
+    def __init__(self, hp, defense, build_time, costs, action, size=1):
         self.hp = hp
         self.defense = defense
         self.build_time = build_time
         self.costs = costs
+        self.action = action
         self.size = size
 
     def trains(self) -> list[MobUnit]:
@@ -28,6 +29,7 @@ class TownCenter(BuildingUnit):
             4,
             240,
             Costs(0, 400, 0, 100),
+            Actions.BUILD_TOWN_CENTER,
             2
         )
 
@@ -50,9 +52,10 @@ class House(BuildingUnit):
         super().__init__(
             800,
             0,
-            60,
+            30,
             Costs(0, 50, 0, 0),
-            1
+            Actions.BUILD_HOUSE,
+            1,
         )
 
     def trains(self) -> list[MobUnit]:
@@ -64,25 +67,11 @@ class House(BuildingUnit):
         return surface
 
 
-class Saloon(BuildingUnit):
-    def __init__(self):
-        super().__init__(
-            700,
-            1,
-            120,
-            Costs(0, 100, 0, 0),
-        )
-
-    def trains(self) -> list[MobUnit]:
-        return [
-            Ruffian()
-        ]
-
-
 class Building:
     selected = False
     built = False
     built_amount = 0
+    last_build_tick = 0
 
     def __init__(self, unit: BuildingUnit, coords):
         self.unit = unit

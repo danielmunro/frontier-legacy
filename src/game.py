@@ -52,6 +52,7 @@ class Game:
         self._unit_move(ticks)
         self._unit_harvest()
         self._unit_attack()
+        self._build_buildings(ticks)
         self._draw_scene()
         self._draw_players()
         self._draw_mouse_border()
@@ -85,6 +86,29 @@ class Game:
                 self.mouse_down_end = pygame.mouse.get_pos()
                 self.menu.reset_ui_elements()
                 self._evaluate_mouse_click()
+
+    def _build_buildings(self, ticks):
+        to_build = {}
+        for player in self.players:
+            for mob in player.mobs:
+                if mob.to_build is not None:
+                    to_build[mob.to_build] = mob
+            for building in player.buildings:
+                if not building.built:
+                    mob_building = to_build[building.unit.action]
+                    amount = floor((ticks - building.last_build_tick) / 1000)
+                    if amount > 1 and mob_building is not None:
+                        neighbors = create_neighbors(building.coords)
+                        next_to = False
+                        for neighbor in neighbors:
+                            if mob_building.coords == neighbor:
+                                next_to = True
+                        if not next_to:
+                            continue
+                        building.built_amount += amount
+                        if building.built_amount >= building.unit.build_time:
+                            building.built = True
+                        building.last_build_tick = ticks
 
     def _start_moving_mobs(self, end):
         for mob in self.players[0].mobs:
@@ -228,7 +252,7 @@ class Game:
             for building in player.buildings:
                 surface = building.unit.draw(self.sprites)
                 if not building.built:
-                    surface.set_alpha(28 + building.built_amount)
+                    surface.set_alpha(128 * (building.built_amount / building.unit.build_time))
                 self.screen.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
                 if building.selected:
                     pygame.draw.rect(

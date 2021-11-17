@@ -37,6 +37,7 @@ class Actions(Enum):
     BUILD_CASTLE = 15
     BUILD_OUTPOST = 16
     BUILD_WALL = 17
+    BUILD_TOWN_CENTER = 18
 
 
 class Colors(Enum):
