@@ -206,8 +206,6 @@ class Game:
                     nearest_neighbor = neighbor
         return nearest_neighbor
 
-
-
     def _move_mob_disperse(self, mob, stationed, ticks):
         for neighbor in create_neighbors(mob.coords):
             if self.is_passable(neighbor) and neighbor not in stationed:
