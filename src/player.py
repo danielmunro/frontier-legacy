@@ -17,3 +17,15 @@ def get_start_mobs(start_coords):
         Mob(Villager(), (coords[0], coords[1])),
         Mob(Villager(), (coords[0] + 1, coords[1])),
     ]
+
+
+class Player:
+    food = 100
+    wood = 100
+    gold = 50
+    stone = 0
+
+    def __init__(self, mobs: list[Mob], buildings: list[Building], is_computer=True):
+        self.mobs = mobs
+        self.buildings = buildings
+        self.is_computer = is_computer

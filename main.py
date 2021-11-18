@@ -4,8 +4,8 @@ from pygame import DOUBLEBUF, HWSURFACE, QUIT
 from pygame.time import Clock
 
 from src.constants import SIZE, FPS_TARGET, Colors
-from src.game import Game, Player
-from src.player import get_start_buildings, get_start_mobs
+from src.game import Game
+from src.player import get_start_buildings, get_start_mobs, Player
 from src.scene import create_plains, Scene, create_resources
 from src.sprite_initializer import initialize_sprites
 

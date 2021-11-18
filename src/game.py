@@ -9,24 +9,13 @@ from src.coords import is_within
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
+from src.player import Player
 from src.resources import Resource
 from src.scene import Scene
 from src.sprites import Spritesheet
 from src.ui import Button
 
 from src.unit_menu import get_ui_from_unit
-
-
-class Player:
-    food = 100
-    wood = 100
-    gold = 50
-    stone = 0
-
-    def __init__(self, mobs: list[Mob], buildings: list[Building], is_computer=True):
-        self.mobs = mobs
-        self.buildings = buildings
-        self.is_computer = is_computer
 
 
 class Game:
