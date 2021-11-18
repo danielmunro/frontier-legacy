@@ -1,4 +1,4 @@
-from src.building import TownCenter, House
+from src.building import TownCenter, House, Barracks
 from src.mob import Villager
 from src.resources import Resource
 from src.sprites import Spritesheet
@@ -37,6 +37,9 @@ def initialize_sprites(sprites: Spritesheet):
         ],
         House: [
             sprites.create(0, 1),
+        ],
+        Barracks: [
+            sprites.create(6, 4),
         ],
     }
     sprites.mobs = {

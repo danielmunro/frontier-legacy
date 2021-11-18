@@ -45,3 +45,18 @@ class Colors(Enum):
     GRAY = (100, 100, 100)
     BLACK = (0, 0, 0)
     MENU_BLUE = (0, 100, 200)
+
+
+BUILD_ACTIONS = [
+    Actions.BUILD_HOUSE,
+    Actions.BUILD_BARRACKS,
+    Actions.BUILD_ARCHERY,
+    Actions.BUILD_MILL,
+    Actions.BUILD_FARM,
+    Actions.BUILD_LUMBER_MILL,
+    Actions.BUILD_STABLE,
+    Actions.BUILD_CASTLE,
+    Actions.BUILD_OUTPOST,
+    Actions.BUILD_WALL,
+    Actions.BUILD_TOWN_CENTER,
+]

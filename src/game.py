@@ -3,8 +3,8 @@ from math import floor, ceil, sqrt
 import pygame
 import sys
 
-from src.building import Building, TownCenter, House
-from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING
+from src.building import Building, TownCenter, House, create_building_from_action
+from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
@@ -119,7 +119,7 @@ class Game:
 
     def _villager_build(self, end):
         end = (floor(end[0]), floor(end[1]))
-        self.players[0].buildings.append(Building(House(), end))
+        self.players[0].buildings.append(Building(create_building_from_action(self.action), end))
         for mob in self.players[0].mobs:
             if mob.selected:
                 mob.move_to = self._nearest_available_neighbor(mob.coords, end)
@@ -143,7 +143,7 @@ class Game:
             self._start_moving_mobs(end)
             return
 
-        if self.action == Actions.BUILD_HOUSE:
+        if self.action in BUILD_ACTIONS:
             self._villager_build(end)
             return
 

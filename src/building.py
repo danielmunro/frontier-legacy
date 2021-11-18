@@ -62,8 +62,28 @@ class House(BuildingUnit):
         return []
 
     def draw(self, sprites: Spritesheet):
-        surface = pygame.Surface([TS * 2, TS * 2]).convert_alpha()
+        surface = pygame.Surface([TS, TS]).convert_alpha()
         surface.blit(sprites.buildings[House][0], (0, 0))
+        return surface
+
+
+class Barracks(BuildingUnit):
+    def __init__(self):
+        super().__init__(
+            1600,
+            0,
+            80,
+            Costs(0, 150, 0, 0),
+            Actions.BUILD_BARRACKS,
+            1,
+        )
+
+    def trains(self) -> list[MobUnit]:
+        return []
+
+    def draw(self, sprites: Spritesheet):
+        surface = pygame.Surface([TS, TS]).convert_alpha()
+        surface.blit(sprites.buildings[Barracks][0], (0, 0))
         return surface
 
 
@@ -77,3 +97,10 @@ class Building:
         self.unit = unit
         self.hp = unit.hp
         self.coords = coords
+
+
+def create_building_from_action(action):
+    if action == Actions.BUILD_HOUSE:
+        return House()
+    elif action == Actions.BUILD_BARRACKS:
+        return Barracks()
