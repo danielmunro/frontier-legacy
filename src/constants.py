@@ -39,6 +39,8 @@ class Actions(Enum):
     BUILD_WALL = 17
     BUILD_TOWN_CENTER = 18
 
+    TRAIN_VILLAGER = 19
+
 
 class Colors(Enum):
     WHITE = (255, 255, 255)

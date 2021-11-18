@@ -1,7 +1,7 @@
 import pygame.display
 from pygame import Surface
 
-from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, BUTTON_HEIGHT
+from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH
 
 
 def create_buttons(font):
@@ -17,6 +17,7 @@ def create_buttons(font):
         Actions.BUILD_LUMBER_MILL: Button(font, "Lumber Mill"),
         Actions.BUILD_MILL: Button(font, "Mill"),
         Actions.BUILD_BARRACKS: Button(font, "Barracks"),
+        Actions.TRAIN_VILLAGER: Button(font, "Villager"),
     }
 
 
@@ -61,8 +62,6 @@ class Menu:
 
 class VillagerMenu(Menu):
     def redraw(self):
-        self.surface.fill(Colors.MENU_BLUE.value)
-
         self.draw_button(self.buttons[Actions.BUILD_HOUSE], 2, 0)
         self.draw_button(self.buttons[Actions.BUILD_LUMBER_MILL], 2, 1)
         self.draw_button(self.buttons[Actions.BUILD_MILL], 2, 2)
@@ -73,6 +72,11 @@ class VillagerMenu(Menu):
         self.draw_button(self.buttons[Actions.BUILD], 3, 2)
         self.draw_button(self.buttons[Actions.ATTACK], 3, 3)
         self.draw_button(self.buttons[Actions.GARRISON], 3, 4)
+
+
+class TownCenterMenu(Menu):
+    def redraw(self):
+        self.draw_button(self.buttons[Actions.TRAIN_VILLAGER], 2, 0)
 
 
 class Button:

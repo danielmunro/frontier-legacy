@@ -15,6 +15,7 @@ from src.ui import Button, VillagerMenu
 
 
 # sys.setrecursionlimit(10000)
+from src.unit_menu import get_ui_from_unit
 
 
 class Player:
@@ -43,7 +44,6 @@ class Game:
         self.button_font = pygame.font.Font('freesansbold.ttf', 24)
         self.number_font = pygame.font.Font('freesansbold.ttf', 12)
         self.sprites = Spritesheet()
-        self.menu = VillagerMenu(self.button_font)
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
         self.background.fill((0, 0, 0))
 
@@ -56,7 +56,7 @@ class Game:
         self._draw_scene()
         self._draw_players()
         self._draw_mouse_border()
-        if self.menu.show:
+        if self.menu and self.menu.show:
             self._draw_menu()
 
     def _draw_mouse_border(self):
@@ -81,10 +81,12 @@ class Game:
                     self.action = Actions.MOVE
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.mouse_down_start = pygame.mouse.get_pos()
-                self.menu.handle_click_event(self.mouse_down_start)
+                if self.menu:
+                    self.menu.handle_click_event(self.mouse_down_start)
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.mouse_down_end = pygame.mouse.get_pos()
-                self.menu.reset_ui_elements()
+                if self.menu:
+                    self.menu.reset_ui_elements()
                 self._evaluate_mouse_click()
 
     def _build_buildings(self, ticks):
@@ -133,7 +135,7 @@ class Game:
         end = (_end[0] / TS, _end[1] / TS)
         m = self.mouse_down_end
 
-        if self.menu.show and m[1] > HEIGHT - MENU_HEIGHT:
+        if self.menu and self.menu.show and m[1] > HEIGHT - MENU_HEIGHT:
             self.mouse_down_start = None
             self.mouse_down_end = None
             self.action = self.menu.map_click_to_action(m)
@@ -160,14 +162,19 @@ class Game:
                     start[1] >= building_start[1] and \
                     end[0] <= building_end[0] and \
                     end[1] <= building_end[1]:
-                clicked = True
-                building.selected = not building.selected
+                clicked = building.unit
+                building.selected = True
         for mob in player.mobs:
             if floor(start[0]) <= mob.coords[0] <= floor(end[0]) and \
                     floor(start[1]) <= mob.coords[1] <= floor(end[1]):
-                clicked = True
-                mob.selected = not mob.selected
-        self.menu.show = clicked
+                clicked = mob.unit
+                mob.selected = True
+        if clicked:
+            print("clicked", clicked)
+            self.menu = get_ui_from_unit(self.button_font, clicked)
+            self.menu.show = True
+        else:
+            self.menu = None
         self.mouse_down_start = None
         self.mouse_down_end = None
 
@@ -290,6 +297,7 @@ class Game:
 
     def _draw_menu(self):
         coords = self.screen.get_size()
+        self.menu.surface.fill(Colors.MENU_BLUE.value)
         self.menu.redraw()
         self._draw_selected()
         self.screen.blit(self.menu.surface, (0, coords[1] - MENU_HEIGHT))

@@ -1,7 +1,7 @@
 import pygame
 
 from src.constants import TS, Actions
-from src.mob import MobUnit, Villager, Ruffian
+from src.mob import MobUnit, Villager
 from src.resources import Costs
 from src.sprites import Spritesheet
 
