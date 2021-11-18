@@ -5,6 +5,7 @@ import sys
 
 from src.building import Building, create_building_from_action, TownCenter
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
+from src.coords import is_within
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
@@ -175,10 +176,7 @@ class Game:
         for building in player.buildings:
             building_start = building.coords
             building_end = (building.coords[0] + building.unit.size, building.coords[1] + building.unit.size)
-            if start[0] >= building_start[0] and \
-                    start[1] >= building_start[1] and \
-                    end[0] <= building_end[0] and \
-                    end[1] <= building_end[1]:
+            if is_within((start, end), (building_start, building_end)):
                 clicked = building.unit
                 building.selected = True
         for mob in player.mobs:
