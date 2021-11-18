@@ -128,8 +128,6 @@ class Game:
         for mob in self.players[0].mobs:
             if mob.selected:
                 mob.move_to = (floor(end[0]), floor(end[1]))
-        self.action = None
-        self.mouse_down_start = None
 
     def _villager_build(self, end):
         end = (floor(end[0]), floor(end[1]))
@@ -138,15 +136,11 @@ class Game:
             if mob.selected:
                 mob.move_to = self._nearest_available_neighbor(mob.coords, end)
                 mob.to_build = self.action
-        self.action = None
-        self.mouse_down_start = None
 
     def _train_villager(self):
         for building in self.players[0].buildings:
             if building.selected and building.unit.__class__ == TownCenter:
                 building.queue.append(Mob(Villager(), (building.coords[0], building.coords[1] + 2)))
-                self.action = None
-                self.mouse_down_start = None
                 return
 
     def _evaluate_mouse_click(self):
@@ -161,14 +155,15 @@ class Game:
             self.action = self.menu.map_click_to_action(m)
             return
 
-        if self.action == Actions.MOVE:
-            self._start_moving_mobs(end)
-            return
-        elif self.action in BUILD_ACTIONS:
-            self._villager_build(end)
-            return
-        elif self.action == Actions.TRAIN_VILLAGER:
-            self._train_villager()
+        if self.action is not None:
+            if self.action == Actions.MOVE:
+                self._start_moving_mobs(end)
+            elif self.action in BUILD_ACTIONS:
+                self._villager_build(end)
+            elif self.action == Actions.TRAIN_VILLAGER:
+                self._train_villager()
+            self.action = None
+            self.mouse_down_start = None
             return
 
         player = self.players[0]
