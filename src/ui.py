@@ -1,3 +1,5 @@
+from math import floor
+
 import pygame.display
 from pygame import Surface
 
@@ -101,3 +103,12 @@ class Button:
             Colors.GRAY.value if self.is_button_pressed else Colors.WHITE.value,
             Colors.BLACK.value,
         )
+
+
+class ProgressBar:
+    amount_completed = 0
+    surface = Surface([24, 3])
+
+    def draw(self):
+        pygame.draw.rect(self.surface, Colors.RED.value, (0, 0, 24, 3))
+        pygame.draw.rect(self.surface, Colors.GREEN.value, (0, 0, floor(24 * (self.amount_completed / 100)), 3))

@@ -1,9 +1,9 @@
-from math import floor, ceil, sqrt
+from math import floor, sqrt
 
 import pygame
 import sys
 
-from src.building import Building, TownCenter, House, create_building_from_action
+from src.building import Building, create_building_from_action, TownCenter
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
 from src.mob import Mob, Villager
 from src.mouse import get_abs_mouse
@@ -11,10 +11,8 @@ from src.pathfind import get_path, create_neighbors
 from src.resources import Resource
 from src.scene import Scene
 from src.sprites import Spritesheet
-from src.ui import Button, VillagerMenu
+from src.ui import Button
 
-
-# sys.setrecursionlimit(10000)
 from src.unit_menu import get_ui_from_unit
 
 
@@ -53,6 +51,7 @@ class Game:
         self._unit_harvest()
         self._unit_attack()
         self._build_buildings(ticks)
+        self._train_mobs(ticks)
         self._draw_scene()
         self._draw_players()
         self._draw_mouse_border()
@@ -88,6 +87,19 @@ class Game:
                 if self.menu:
                     self.menu.reset_ui_elements()
                 self._evaluate_mouse_click()
+
+    def _train_mobs(self, ticks):
+        for player in self.players:
+            for building in player.buildings:
+                if len(building.queue) > 0:
+                    mob = building.queue[0]
+                    amount = floor((ticks - mob.last_built_ticks) / 1000)
+                    if amount > 1:
+                        mob.time_built += amount
+                        mob.last_built_ticks = ticks
+                        if mob.time_built >= mob.unit.build_time:
+                            player.mobs.append(mob)
+                            building.queue.pop(0)
 
     def _build_buildings(self, ticks):
         to_build = {}
@@ -129,6 +141,14 @@ class Game:
         self.action = None
         self.mouse_down_start = None
 
+    def _train_villager(self):
+        for building in self.players[0].buildings:
+            if building.selected and building.unit.__class__ == TownCenter:
+                building.queue.append(Mob(Villager(), (building.coords[0], building.coords[1] + 2)))
+                self.action = None
+                self.mouse_down_start = None
+                return
+
     def _evaluate_mouse_click(self):
         _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
         start = (_start[0] / TS, _start[1] / TS)
@@ -144,13 +164,15 @@ class Game:
         if self.action == Actions.MOVE:
             self._start_moving_mobs(end)
             return
-
-        if self.action in BUILD_ACTIONS:
+        elif self.action in BUILD_ACTIONS:
             self._villager_build(end)
+            return
+        elif self.action == Actions.TRAIN_VILLAGER:
+            self._train_villager()
             return
 
         player = self.players[0]
-        clicked = False
+        clicked = None
         for building in player.buildings:
             building.selected = False
         for mob in player.mobs:
@@ -170,7 +192,6 @@ class Game:
                 clicked = mob.unit
                 mob.selected = True
         if clicked:
-            print("clicked", clicked)
             self.menu = get_ui_from_unit(self.button_font, clicked)
             self.menu.show = True
         else:

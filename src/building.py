@@ -92,6 +92,7 @@ class Building:
     built = False
     built_amount = 0
     last_build_tick = 0
+    queue = []
 
     def __init__(self, unit: BuildingUnit, coords):
         self.unit = unit

@@ -47,6 +47,8 @@ class Colors(Enum):
     GRAY = (100, 100, 100)
     BLACK = (0, 0, 0)
     MENU_BLUE = (0, 100, 200)
+    RED = (255, 0, 0)
+    GREEN = (0, 255, 0)
 
 
 BUILD_ACTIONS = [

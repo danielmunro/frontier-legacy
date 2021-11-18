@@ -179,6 +179,8 @@ class Mob:
     last_move_ticks = None
     path = None
     to_build = None
+    time_built = 0
+    last_built_ticks = 0
 
     def __init__(self, unit: MobUnit, coords):
         self.unit = unit
