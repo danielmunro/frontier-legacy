@@ -3,10 +3,10 @@ from math import floor, sqrt
 import pygame
 import sys
 
-from src.building import Building, create_building_from_action, TownCenter
+from src.building import Building, create_building_from_action, TownCenter, Barracks
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
 from src.coords import is_within
-from src.mob import Mob, Villager
+from src.mob import Mob, Villager, Footman
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
 from src.player import Player
@@ -45,7 +45,7 @@ class Game:
         self._draw_scene()
         self._draw_players()
         self._draw_mouse_border()
-        if self.menu and self.menu.show:
+        if self.menu:
             self._draw_menu()
 
     def _draw_mouse_border(self):
@@ -133,16 +133,26 @@ class Game:
                 building.queue.append(Mob(Villager(), (building.coords[0], building.coords[1] + 2)))
                 return
 
+    def _train_footman(self):
+        for building in self.players[0].buildings:
+            if building.selected and building.unit.__class__ == Barracks:
+                building.queue.append(Mob(Footman(), (building.coords[0], building.coords[1] + 1)))
+                return
+
     def _evaluate_mouse_click(self):
         _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
         start = (_start[0] / TS, _start[1] / TS)
         end = (_end[0] / TS, _end[1] / TS)
         m = self.mouse_down_end
 
-        if self.menu and self.menu.show and m[1] > HEIGHT - MENU_HEIGHT:
+        if self.menu and m[1] > HEIGHT - MENU_HEIGHT:
             self.mouse_down_start = None
             self.mouse_down_end = None
             self.action = self.menu.map_click_to_action(m)
+            if self.action == Actions.TRAIN_VILLAGER:
+                self._train_villager()
+            elif self.action == Actions.TRAIN_FOOTMAN:
+                self._train_footman()
             return
 
         if self.action is not None:
@@ -150,8 +160,6 @@ class Game:
                 self._start_moving_mobs(end)
             elif self.action in BUILD_ACTIONS:
                 self._villager_build(end)
-            elif self.action == Actions.TRAIN_VILLAGER:
-                self._train_villager()
             self.action = None
             self.mouse_down_start = None
             return
@@ -175,7 +183,6 @@ class Game:
                 mob.selected = True
         if clicked:
             self.menu = get_ui_from_unit(self.button_font, clicked)
-            self.menu.show = True
         else:
             self.menu = None
         self.mouse_down_start = None
@@ -262,7 +269,7 @@ class Game:
             for building in player.buildings:
                 surface = building.unit.draw(self.sprites)
                 if not building.built:
-                    surface.set_alpha(128 * (building.built_amount / building.unit.build_time))
+                    surface.set_alpha(64 + (128 * (building.built_amount / building.unit.build_time)) / 2)
                 self.screen.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
                 if building.selected:
                     pygame.draw.rect(

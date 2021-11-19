@@ -20,6 +20,7 @@ def create_buttons(font):
         Actions.BUILD_MILL: Button(font, "Mill"),
         Actions.BUILD_BARRACKS: Button(font, "Barracks"),
         Actions.TRAIN_VILLAGER: Button(font, "Villager"),
+        Actions.TRAIN_FOOTMAN: Button(font, "Footman"),
     }
 
 
@@ -27,7 +28,6 @@ class Menu:
     def __init__(self, font):
         self.font = font
         self.buttons = create_buttons(font)
-        self.show = False
         coords = pygame.display.get_window_size()
         self.surface = Surface([coords[0], MENU_HEIGHT])
 
@@ -76,9 +76,21 @@ class VillagerMenu(Menu):
         self.draw_button(self.buttons[Actions.GARRISON], 3, 4)
 
 
+class MilitaryMenu(Menu):
+    def redraw(self):
+        self.draw_button(self.buttons[Actions.MOVE], 3, 0)
+        self.draw_button(self.buttons[Actions.ATTACK], 3, 1)
+        self.draw_button(self.buttons[Actions.GARRISON], 3, 2)
+
+
 class TownCenterMenu(Menu):
     def redraw(self):
         self.draw_button(self.buttons[Actions.TRAIN_VILLAGER], 2, 0)
+
+
+class BarracksMenu(Menu):
+    def redraw(self):
+        self.draw_button(self.buttons[Actions.TRAIN_FOOTMAN], 2, 0)
 
 
 class Button:

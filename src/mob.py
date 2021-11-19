@@ -67,7 +67,7 @@ class Villager(MobUnit):
 
     def draw(self, sprites: Spritesheet):
         surface = pygame.Surface([TS, TS]).convert_alpha()
-        surface.blit(sprites.mobs[Villager.__class__][0 if self.gender == Gender.FEMALE else 1], (0, 0))
+        surface.blit(sprites.mobs[Villager][0 if self.gender == Gender.FEMALE else 1], (0, 0))
         return surface
 
 
@@ -99,10 +99,15 @@ class Footman(MobUnit):
             1,
             1,
             1,
-            1,
-            50,
+            800,
+            30,
             Costs(75, 0, 20, 0),
         )
+
+    def draw(self, sprites: Spritesheet):
+        surface = pygame.Surface([TS, TS]).convert_alpha()
+        surface.blit(sprites.mobs[Footman][0], (0, 0))
+        return surface
 
 
 class Swordsman(MobUnit):

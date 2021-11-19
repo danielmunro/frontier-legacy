@@ -40,6 +40,7 @@ class Actions(Enum):
     BUILD_TOWN_CENTER = 18
 
     TRAIN_VILLAGER = 19
+    TRAIN_FOOTMAN = 20
 
 
 class Colors(Enum):
