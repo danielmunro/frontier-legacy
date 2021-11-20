@@ -5,7 +5,7 @@ import sys
 
 from src.building import Building, create_building_from_action, TownCenter, Barracks
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
-from src.coords import is_within
+from src.coords import is_within, px_to_tile
 from src.mob import Mob, Villager, Footman
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
@@ -127,22 +127,16 @@ class Game:
                 mob.move_to = self._nearest_available_neighbor(mob.coords, end)
                 mob.to_build = self.action
 
-    def _train_villager(self):
+    def _train_mob(self, building_class, mob):
         for building in self.players[0].buildings:
-            if building.selected and building.unit.__class__ == TownCenter:
-                building.queue.append(Mob(Villager(), (building.coords[0], building.coords[1] + 2)))
-                return
-
-    def _train_footman(self):
-        for building in self.players[0].buildings:
-            if building.selected and building.unit.__class__ == Barracks:
-                building.queue.append(Mob(Footman(), (building.coords[0], building.coords[1] + 1)))
+            if building.selected and building.unit.__class__ == building_class:
+                building.queue.append(Mob(mob, (building.coords[0], building.coords[1] + building.unit.size)))
                 return
 
     def _evaluate_mouse_click(self):
         _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
-        start = (_start[0] / TS, _start[1] / TS)
-        end = (_end[0] / TS, _end[1] / TS)
+        start = px_to_tile(_start)
+        end = px_to_tile(_end)
         m = self.mouse_down_end
 
         if self.menu and m[1] > HEIGHT - MENU_HEIGHT:
@@ -150,9 +144,9 @@ class Game:
             self.mouse_down_end = None
             self.action = self.menu.map_click_to_action(m)
             if self.action == Actions.TRAIN_VILLAGER:
-                self._train_villager()
+                self._train_mob(TownCenter, Villager())
             elif self.action == Actions.TRAIN_FOOTMAN:
-                self._train_footman()
+                self._train_mob(Barracks, Footman())
             return
 
         if self.action is not None:

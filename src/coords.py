@@ -1,3 +1,6 @@
+from src.constants import TS
+
+
 def is_within(rect1, rect2):
     r1tl = rect1[0]
     r1br = rect1[1]
@@ -9,3 +12,5 @@ def is_within(rect1, rect2):
         r1br[1] <= r2br[1]
 
 
+def px_to_tile(coords):
+    return coords[0] / TS, coords[1] / TS
