@@ -10,7 +10,7 @@ from src.mob import Mob, Villager, Footman
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
 from src.player import Player
-from src.resources import Resource
+from src.resources import get_resource_from_index
 from src.scene import Scene
 from src.sprites import Spritesheet
 from src.ui import Button
@@ -25,15 +25,15 @@ class Game:
     action = None
     menu = None
 
-    def __init__(self, screen, scene: Scene, players: list[Player]):
+    def __init__(self, screen, scene: Scene, players: list[Player], sprites):
         self.screen = screen
         self.scene = scene
         self.players = players
+        self.sprites = sprites
         self.button_font = pygame.font.Font('freesansbold.ttf', 24)
         self.number_font = pygame.font.Font('freesansbold.ttf', 12)
-        self.sprites = Spritesheet()
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
-        self.background.fill((0, 0, 0))
+        self.background.fill(Colors.BLACK.value)
 
     def loop(self, ticks):
         self._handle_events()
@@ -183,25 +183,7 @@ class Game:
         self.mouse_down_end = None
 
     def _draw_scene(self):
-        for y in range(len(self.scene.background)):
-            for x in range(len(self.scene.background[y])):
-                index = self.scene.background[y][x]
-                self.background.blit(self.sprites.terrain[index][(x + y) % 2 == 0], (x * TS, y * TS))
-        for y in range(len(self.scene.resources)):
-            for x in range(len(self.scene.resources[y])):
-                index = self.scene.resources[y][x]
-                resource = None
-                if index == 1:
-                    resource = Resource.WOOD
-                elif index == 2:
-                    resource = Resource.GOLD
-                elif index == 3:
-                    resource = Resource.STONE
-                elif index == 4:
-                    resource = Resource.FOOD
-                if resource is not None:
-                    self.background.blit(self.sprites.resources[resource], (x * TS, y * TS))
-        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.scene.draw(), (0, 0))
 
     def _unit_move(self, ticks):
         stationed = {}

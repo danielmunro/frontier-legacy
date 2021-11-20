@@ -1,18 +1,35 @@
 from random import random, randrange
 
-from src.constants import SCENE_SIZE
+from pygame import Surface
+
+from src.constants import SCENE_SIZE, TS, HEIGHT, WIDTH
+from src.resources import get_resource_from_index
 
 
 class Scene:
-    def __init__(self, background, blocking, resources):
+    def __init__(self, background, blocking, resources, sprites):
         self.background = background
         self.blocking = blocking
         self.resources = resources
+        self.sprites = sprites
 
     def is_passable(self, coords):
         x = coords[0]
         y = coords[1]
         return 0 < x < len(self.resources[0]) and 0 < y < len(self.resources) and self.resources[y][x] == 0
+
+    def draw(self):
+        surface = Surface([WIDTH, HEIGHT]).convert_alpha()
+        for y in range(len(self.background)):
+            for x in range(len(self.background[y])):
+                index = self.background[y][x]
+                surface.blit(self.sprites.terrain[index][(x + y) % 2 == 0], (x * TS, y * TS))
+        for y in range(len(self.resources)):
+            for x in range(len(self.resources[y])):
+                resource = get_resource_from_index(self.resources[y][x])
+                if resource is not None:
+                    surface.blit(self.sprites.resources[resource], (x * TS, y * TS))
+        return surface
 
 
 def create_plains():

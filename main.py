@@ -8,6 +8,7 @@ from src.game import Game
 from src.player import get_start_buildings, get_start_mobs, Player
 from src.scene import create_plains, Scene, create_resources
 from src.sprite_initializer import initialize_sprites
+from src.sprites import Spritesheet
 
 pygame.init()
 pygame.display.set_caption('Frontier Legacy')
@@ -19,12 +20,14 @@ screen.blit(background, (0, 0))
 pygame.display.flip()
 player1_start = 10, 10
 player2_start = 50, 40
+sprites = Spritesheet()
 game = Game(
     screen,
     Scene(
         create_plains(),
         [],
         create_resources([player1_start, player2_start]),
+        sprites,
     ),
     [
         Player(
@@ -37,6 +40,7 @@ game = Game(
             get_start_buildings(player2_start),
         ),
     ],
+    sprites,
 )
 initialize_sprites(game.sprites)
 
