@@ -6,28 +6,27 @@ from pygame import Surface
 from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH
 
 
-def create_buttons(font):
+def create_buttons():
     return {
-        Actions.MOVE: Button(font, "Move"),
-        Actions.ATTACK_MOVE: Button(font, "Attack Move"),
-        Actions.ATTACK: Button(font, "Attack"),
-        Actions.HARVEST: Button(font, "Harvest"),
-        Actions.BUILD: Button(font, "Build"),
-        Actions.REPAIR: Button(font, "Repair"),
-        Actions.GARRISON: Button(font, "Garrison"),
-        Actions.BUILD_HOUSE: Button(font, "House"),
-        Actions.BUILD_LUMBER_MILL: Button(font, "Lumber Mill"),
-        Actions.BUILD_MILL: Button(font, "Mill"),
-        Actions.BUILD_BARRACKS: Button(font, "Barracks"),
-        Actions.TRAIN_VILLAGER: Button(font, "Villager"),
-        Actions.TRAIN_FOOTMAN: Button(font, "Footman"),
+        Actions.MOVE: Button("Move"),
+        Actions.ATTACK_MOVE: Button("Attack Move"),
+        Actions.ATTACK: Button("Attack"),
+        Actions.HARVEST: Button("Harvest"),
+        Actions.BUILD: Button("Build"),
+        Actions.REPAIR: Button("Repair"),
+        Actions.GARRISON: Button("Garrison"),
+        Actions.BUILD_HOUSE: Button("House"),
+        Actions.BUILD_LUMBER_MILL: Button("Lumber Mill"),
+        Actions.BUILD_MILL: Button("Mill"),
+        Actions.BUILD_BARRACKS: Button("Barracks"),
+        Actions.TRAIN_VILLAGER: Button("Villager"),
+        Actions.TRAIN_FOOTMAN: Button("Footman"),
     }
 
 
 class Menu:
-    def __init__(self, font):
-        self.font = font
-        self.buttons = create_buttons(font)
+    def __init__(self):
+        self.buttons = create_buttons()
         coords = pygame.display.get_window_size()
         self.surface = Surface([coords[0], MENU_HEIGHT])
 
@@ -94,8 +93,8 @@ class BarracksMenu(Menu):
 
 
 class Button:
-    def __init__(self, font, label):
-        self.font = font
+    def __init__(self, label):
+        self.font = self.button_font = pygame.font.Font('freesansbold.ttf', 24)
         self.label = label
         self.is_button_pressed = False
         rendered = self._render_text()
@@ -105,7 +104,12 @@ class Button:
 
     def render_button(self):
         self.surface.blit(self._render_text(), (PADDING, PADDING))
-        pygame.draw.rect(self.surface, Colors.WHITE.value, (0, 0, self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)), 1)
+        pygame.draw.rect(
+            self.surface,
+            Colors.WHITE.value,
+            (0, 0, self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)),
+            1,
+        )
         return self.surface
 
     def _render_text(self):

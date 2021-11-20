@@ -10,10 +10,7 @@ from src.mob import Mob, Villager, Footman
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
 from src.player import Player
-from src.resources import get_resource_from_index
 from src.scene import Scene
-from src.sprites import Spritesheet
-from src.ui import Button
 
 from src.unit_menu import get_ui_from_unit
 
@@ -30,7 +27,6 @@ class Game:
         self.scene = scene
         self.players = players
         self.sprites = sprites
-        self.button_font = pygame.font.Font('freesansbold.ttf', 24)
         self.number_font = pygame.font.Font('freesansbold.ttf', 12)
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
         self.background.fill(Colors.BLACK.value)
@@ -176,7 +172,7 @@ class Game:
                 clicked = mob.unit
                 mob.selected = True
         if clicked:
-            self.menu = get_ui_from_unit(self.button_font, clicked)
+            self.menu = get_ui_from_unit(clicked)
         else:
             self.menu = None
         self.mouse_down_start = None
@@ -274,9 +270,3 @@ class Game:
                 ((offset_x * TS) + TS, PADDING + 4),
             )
             offset_x += 2
-
-    def _button(self, label):
-        return Button(
-            self.button_font,
-            label,
-        )

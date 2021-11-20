@@ -3,12 +3,12 @@ from src.mob import Villager, Footman
 from src.ui import VillagerMenu, TownCenterMenu, BarracksMenu, MilitaryMenu
 
 
-def get_ui_from_unit(font, unit):
+def get_ui_from_unit(unit):
     if unit.__class__ == Villager:
-        return VillagerMenu(font)
+        return VillagerMenu()
     elif unit.__class__ == TownCenter:
-        return TownCenterMenu(font)
+        return TownCenterMenu()
     elif unit.__class__ == Barracks:
-        return BarracksMenu(font)
+        return BarracksMenu()
     elif unit.__class__ == Footman:
-        return MilitaryMenu(font)
+        return MilitaryMenu()
