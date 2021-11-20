@@ -1,8 +1,11 @@
+from math import floor
+
 import pygame
 
 from src.building import Building, TownCenter
 from src.constants import Colors, HEIGHT, WIDTH, TS
 from src.mob import Mob, Villager
+from src.pathfind import create_neighbors
 
 
 def get_start_buildings(coords):
@@ -69,3 +72,40 @@ class Player:
                     1,
                 )
         return scene
+
+    def train_mobs(self, ticks):
+        for building in self.buildings:
+            if len(building.queue) > 0:
+                mob = building.queue[0]
+                amount = floor((ticks - mob.last_built_ticks) / 1000)
+                if amount > 1:
+                    mob.time_built += amount
+                    mob.last_built_ticks = ticks
+                    if mob.time_built >= mob.unit.build_time:
+                        self.mobs.append(mob)
+                        building.queue.pop(0)
+
+    def build_buildings(self, ticks):
+        to_build = {}
+        for mob in self.mobs:
+            if mob.to_build is not None:
+                to_build[mob.to_build] = mob
+        for building in self.buildings:
+            if not building.built:
+                try:
+                    mob_building = to_build[building.unit.action]
+                except KeyError:
+                    continue
+                amount = floor((ticks - building.last_build_tick) / 1000)
+                if amount > 1 and mob_building is not None:
+                    neighbors = create_neighbors(building.coords)
+                    next_to = False
+                    for neighbor in neighbors:
+                        if mob_building.coords == neighbor:
+                            next_to = True
+                    if not next_to:
+                        continue
+                    building.built_amount += amount
+                    if building.built_amount >= building.unit.build_time:
+                        building.built = True
+                    building.last_build_tick = ticks

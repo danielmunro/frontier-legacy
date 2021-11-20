@@ -76,39 +76,11 @@ class Game:
 
     def _train_mobs(self, ticks):
         for player in self.players:
-            for building in player.buildings:
-                if len(building.queue) > 0:
-                    mob = building.queue[0]
-                    amount = floor((ticks - mob.last_built_ticks) / 1000)
-                    if amount > 1:
-                        mob.time_built += amount
-                        mob.last_built_ticks = ticks
-                        if mob.time_built >= mob.unit.build_time:
-                            player.mobs.append(mob)
-                            building.queue.pop(0)
+            player.train_mobs(ticks)
 
     def _build_buildings(self, ticks):
-        to_build = {}
         for player in self.players:
-            for mob in player.mobs:
-                if mob.to_build is not None:
-                    to_build[mob.to_build] = mob
-            for building in player.buildings:
-                if not building.built:
-                    mob_building = to_build[building.unit.action]
-                    amount = floor((ticks - building.last_build_tick) / 1000)
-                    if amount > 1 and mob_building is not None:
-                        neighbors = create_neighbors(building.coords)
-                        next_to = False
-                        for neighbor in neighbors:
-                            if mob_building.coords == neighbor:
-                                next_to = True
-                        if not next_to:
-                            continue
-                        building.built_amount += amount
-                        if building.built_amount >= building.unit.build_time:
-                            building.built = True
-                        building.last_build_tick = ticks
+            player.build_buildings(ticks)
 
     def _start_moving_mobs(self, end):
         for mob in self.players[0].mobs:
@@ -148,11 +120,14 @@ class Game:
         if self.action is not None:
             if self.action == Actions.MOVE:
                 self._start_moving_mobs(end)
+                self.action = None
+                self.mouse_down_start = None
+                return
             elif self.action in BUILD_ACTIONS:
                 self._villager_build(end)
-            self.action = None
-            self.mouse_down_start = None
-            return
+                self.action = None
+                self.mouse_down_start = None
+                return
 
         player = self.players[0]
         clicked = None
