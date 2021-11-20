@@ -236,9 +236,6 @@ class Game:
 
     def is_passable(self, coords):
         for player in self.players:
-            for mob in player.mobs:
-                if mob.move_to is None and mob.coords == coords:
-                    return False
             for building in player.buildings:
                 if building.coords == coords:
                     return False
