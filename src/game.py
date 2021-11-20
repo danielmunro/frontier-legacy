@@ -197,7 +197,11 @@ class Game:
                         continue
                     if not mob.path:
                         mob.path = get_path(self, mob.coords, mob.move_to)
-                    move_to = mob.path.pop(0)
+                    try:
+                        move_to = mob.path.pop(0)
+                    except IndexError:
+                        mob.move_to = None
+                        continue
                     if not self.is_passable(move_to):
                         mob.reset()
                         if mob.coords in stationed:

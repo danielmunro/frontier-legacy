@@ -31,6 +31,8 @@ def get_path(game, start, end):
     this_move = None
     while cost < MAX_COST_GUARD:
         unvisited = list(filter(lambda i: not i.visited, known_nodes))
+        if len(unvisited) == 0:
+            return []
         sorted(unvisited, key=lambda i: i.cost)
         this_move = unvisited[0]
         this_move.visited = True
