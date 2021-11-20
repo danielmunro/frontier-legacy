@@ -242,38 +242,7 @@ class Game:
 
     def _draw_players(self):
         for player in self.players:
-            for building in player.buildings:
-                surface = building.unit.draw(self.sprites)
-                if not building.built:
-                    surface.set_alpha(64 + (128 * (building.built_amount / building.unit.build_time)) / 2)
-                self.screen.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
-                if building.selected:
-                    pygame.draw.rect(
-                        self.screen,
-                        Colors.WHITE.value,
-                        (
-                            building.coords[0] * TS,
-                            building.coords[1] * TS,
-                            building.unit.size * TS,
-                            building.unit.size * TS,
-                        ),
-                        1,
-                    )
-            for mob in player.mobs:
-                surface = mob.unit.draw(self.sprites)
-                self.screen.blit(surface, (mob.coords[0] * TS, mob.coords[1] * TS))
-                if mob.selected:
-                    pygame.draw.rect(
-                        self.screen,
-                        Colors.WHITE.value,
-                        (
-                            mob.coords[0] * TS,
-                            mob.coords[1] * TS,
-                            TS,
-                            TS,
-                        ),
-                        1,
-                    )
+            self.screen.blit(player.draw(), (0, 0))
 
     def _unit_attack(self):
         pass

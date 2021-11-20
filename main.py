@@ -33,11 +33,13 @@ game = Game(
         Player(
             get_start_mobs(player1_start),
             get_start_buildings(player1_start),
+            sprites,
             is_computer=False,
         ),
         Player(
             get_start_mobs(player2_start),
             get_start_buildings(player2_start),
+            sprites,
         ),
     ],
     sprites,
