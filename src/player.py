@@ -43,9 +43,9 @@ class Player:
         for building in self.buildings:
             surface = building.unit.draw(self.sprites)
             if not building.built:
-                surface.set_alpha(64 + (128 * building.built_amount) / 2)
+                surface.set_alpha(64 + ((128 * (building.built_amount / building.unit.build_time)) / 2))
                 building.progress_bar.draw()
-                surface.blit(building.progress_bar.surface, (0, 0))
+                surface.blit(building.progress_bar.surface, (0, 13))
             scene.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
             if building.selected:
                 pygame.draw.rect(
