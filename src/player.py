@@ -6,6 +6,7 @@ from src.building import Building, TownCenter, create_building_from_action
 from src.constants import Colors, HEIGHT, WIDTH, TS
 from src.mob import Mob, Villager
 from src.pathfind import create_neighbors
+from src.ui import ProgressBar
 
 
 def get_start_buildings(coords):
@@ -42,7 +43,9 @@ class Player:
         for building in self.buildings:
             surface = building.unit.draw(self.sprites)
             if not building.built:
-                surface.set_alpha(64 + (128 * (building.built_amount / building.unit.build_time)) / 2)
+                surface.set_alpha(64 + (128 * building.built_amount) / 2)
+                building.progress_bar.draw()
+                surface.blit(building.progress_bar.surface, (0, 0))
             scene.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
             if building.selected:
                 pygame.draw.rect(
@@ -106,6 +109,7 @@ class Player:
                     if not next_to:
                         continue
                     building.built_amount += amount
+                    building.progress_bar.amount_completed = building.built_amount / building.unit.build_time
                     if building.built_amount >= building.unit.build_time:
                         building.built = True
                     building.last_build_tick = ticks

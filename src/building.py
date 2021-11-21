@@ -4,6 +4,7 @@ from src.constants import TS, Actions
 from src.mob import MobUnit, Villager
 from src.resources import Costs
 from src.sprites import Spritesheet
+from src.ui import ProgressBar
 
 
 class BuildingUnit:
@@ -52,7 +53,7 @@ class House(BuildingUnit):
         super().__init__(
             800,
             0,
-            30,
+            20,
             Costs(0, 50, 0, 0),
             Actions.BUILD_HOUSE,
             1,
@@ -72,7 +73,7 @@ class Barracks(BuildingUnit):
         super().__init__(
             1600,
             0,
-            80,
+            40,
             Costs(0, 150, 0, 0),
             Actions.BUILD_BARRACKS,
             1,
@@ -98,6 +99,7 @@ class Building:
         self.unit = unit
         self.hp = unit.hp
         self.coords = coords
+        self.progress_bar = ProgressBar()
 
 
 def create_building_from_action(action):
