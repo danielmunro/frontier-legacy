@@ -1,3 +1,5 @@
+from math import floor
+
 from src.constants import TS
 
 
@@ -14,3 +16,7 @@ def is_within(rect1, rect2):
 
 def px_to_tile(coords):
     return coords[0] / TS, coords[1] / TS
+
+
+def floor_coords(coords):
+    return floor(coords[0]), floor(coords[1])

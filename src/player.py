@@ -2,7 +2,7 @@ from math import floor
 
 import pygame
 
-from src.building import Building, TownCenter
+from src.building import Building, TownCenter, create_building_from_action
 from src.constants import Colors, HEIGHT, WIDTH, TS
 from src.mob import Mob, Villager
 from src.pathfind import create_neighbors
@@ -109,3 +109,28 @@ class Player:
                     if building.built_amount >= building.unit.build_time:
                         building.built = True
                     building.last_build_tick = ticks
+
+    def is_blocking(self, coords):
+        for building in self.buildings:
+            if building.coords == coords:
+                return True
+
+    def move_selected_mobs(self, coords):
+        for mob in self.mobs:
+            if mob.selected:
+                mob.move_to = (floor(coords[0]), floor(coords[1]))
+
+    def villager_build(self, action, coords) -> list[Mob]:
+        self.buildings.append(Building(create_building_from_action(action), coords))
+        mobs = []
+        for mob in self.mobs:
+            if mob.selected:
+                mob.to_build = action
+                mobs.append(mob)
+        return mobs
+
+    def train_mob(self, building_class, mob):
+        for building in self.buildings:
+            if building.selected and building.unit.__class__ == building_class:
+                building.queue.append(Mob(mob, (building.coords[0], building.coords[1] + building.unit.size)))
+                return

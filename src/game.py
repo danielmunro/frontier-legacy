@@ -5,7 +5,7 @@ import sys
 
 from src.building import Building, create_building_from_action, TownCenter, Barracks
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
-from src.coords import is_within, px_to_tile
+from src.coords import is_within, px_to_tile, floor_coords
 from src.mob import Mob, Villager, Footman
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
@@ -82,24 +82,17 @@ class Game:
         for player in self.players:
             player.build_buildings(ticks)
 
-    def _start_moving_mobs(self, end):
-        for mob in self.players[0].mobs:
-            if mob.selected:
-                mob.move_to = (floor(end[0]), floor(end[1]))
+    def _start_moving_mobs(self, coords):
+        self.players[0].move_selected_mobs(coords)
 
-    def _villager_build(self, end):
-        end = (floor(end[0]), floor(end[1]))
-        self.players[0].buildings.append(Building(create_building_from_action(self.action), end))
-        for mob in self.players[0].mobs:
-            if mob.selected:
-                mob.move_to = self._nearest_available_neighbor(mob.coords, end)
-                mob.to_build = self.action
+    def _villager_build(self, coords):
+        coords = floor_coords(coords)
+        mobs = self.players[0].villager_build(self.action, coords)
+        for mob in mobs:
+            mob.move_to = self._nearest_available_neighbor(mob.coords, coords)
 
     def _train_mob(self, building_class, mob):
-        for building in self.players[0].buildings:
-            if building.selected and building.unit.__class__ == building_class:
-                building.queue.append(Mob(mob, (building.coords[0], building.coords[1] + building.unit.size)))
-                return
+        self.players[0].train_mob(building_class, mob)
 
     def _evaluate_mouse_click(self):
         _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
@@ -207,9 +200,8 @@ class Game:
 
     def is_passable(self, coords):
         for player in self.players:
-            for building in player.buildings:
-                if building.coords == coords:
-                    return False
+            if player.is_blocking(coords):
+                return False
         return self.scene.is_passable(coords)
 
     def _draw_players(self):
