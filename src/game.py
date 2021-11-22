@@ -11,6 +11,7 @@ from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
 from src.player import Player
 from src.scene import Scene
+from src.ui import TopMenu
 
 from src.unit_menu import get_ui_from_unit
 
@@ -26,6 +27,7 @@ class Game:
         self.screen = screen
         self.scene = scene
         self.players = players
+        self.top_menu = TopMenu(self.players[0])
         self.sprites = sprites
         self.number_font = pygame.font.Font('freesansbold.ttf', 12)
         self.background = pygame.Surface(screen.get_size()).convert_alpha()
@@ -41,6 +43,7 @@ class Game:
         self._draw_scene()
         self._draw_players()
         self._draw_mouse_border()
+        self.screen.blit(self.top_menu.draw(), (0, 0))
         if self.menu:
             self._draw_menu()
 

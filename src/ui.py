@@ -3,7 +3,7 @@ from math import floor
 import pygame.display
 from pygame import Surface
 
-from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, MAX_ALPHA
+from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, MAX_ALPHA, WIDTH, TS
 
 
 def create_buttons():
@@ -135,3 +135,17 @@ class ProgressBar:
     def draw(self):
         pygame.draw.rect(self.surface, Colors.RED.value, (0, 0, 16, 3))
         pygame.draw.rect(self.surface, Colors.GREEN.value, (0, 0, floor(16 * self.amount_completed), 3))
+
+
+class TopMenu:
+    surface = Surface([WIDTH, TS])
+
+    def __init__(self, player):
+        self.player = player
+        self.font = pygame.font.Font('freesansbold.ttf', 14)
+
+    def draw(self):
+        self.surface.fill(Colors.MENU_BLUE.value)
+        text = self.font.render(f'{self.player.food} food - {self.player.wood} wood - {self.player.gold} gold - {self.player.stone} stone', True, Colors.WHITE.value, Colors.MENU_BLUE.value)
+        self.surface.blit(text, (1, 1))
+        return self.surface
