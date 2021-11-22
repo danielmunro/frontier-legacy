@@ -4,7 +4,7 @@ from src.constants import TS, Actions
 from src.mob import MobUnit, Villager
 from src.resources import Costs
 from src.sprites import Spritesheet
-from src.ui import ProgressBar
+from src.ui import ProgressBar, Menu, TownCenterMenu, EmptyMenu, BarracksMenu
 
 
 class BuildingUnit:
@@ -20,6 +20,9 @@ class BuildingUnit:
         return []
 
     def draw(self, sprites: Spritesheet):
+        pass
+
+    def get_menu(self) -> Menu:
         pass
 
 
@@ -47,6 +50,9 @@ class TownCenter(BuildingUnit):
         surface.blit(sprites.buildings[TownCenter][3], (TS, TS))
         return surface
 
+    def get_menu(self) -> Menu:
+        return TownCenterMenu()
+
 
 class House(BuildingUnit):
     def __init__(self):
@@ -66,6 +72,9 @@ class House(BuildingUnit):
         surface = pygame.Surface([TS, TS]).convert_alpha()
         surface.blit(sprites.buildings[House][0], (0, 0))
         return surface
+
+    def get_menu(self) -> Menu:
+        return EmptyMenu()
 
 
 class Barracks(BuildingUnit):
@@ -87,6 +96,9 @@ class Barracks(BuildingUnit):
         surface.blit(sprites.buildings[Barracks][0], (0, 0))
         return surface
 
+    def get_menu(self) -> Menu:
+        return BarracksMenu()
+
 
 class LumberMill(BuildingUnit):
     def __init__(self):
@@ -107,6 +119,9 @@ class LumberMill(BuildingUnit):
         surface.blit(sprites.buildings[LumberMill][0], (0, 0))
         return surface
 
+    def get_menu(self) -> Menu:
+        return EmptyMenu()
+
 
 class Mill(BuildingUnit):
     def __init__(self):
@@ -126,6 +141,9 @@ class Mill(BuildingUnit):
         surface = pygame.Surface([TS, TS]).convert_alpha()
         surface.blit(sprites.buildings[Mill][0], (0, 0))
         return surface
+
+    def get_menu(self) -> Menu:
+        return EmptyMenu()
 
 
 class Building:

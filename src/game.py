@@ -13,8 +13,6 @@ from src.player import Player
 from src.scene import Scene
 from src.ui import TopMenu
 
-from src.unit_menu import get_ui_from_unit
-
 
 class Game:
     mouse_down_start = None
@@ -145,7 +143,7 @@ class Game:
                 clicked = mob
                 mob.selected = True
         if clicked:
-            self.menu = get_ui_from_unit(clicked.unit)
+            self.menu = clicked.unit.get_menu()
             self.menu.enabled = built
             clicked.menu = self.menu
         else:

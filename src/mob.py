@@ -5,6 +5,7 @@ import pygame
 from src.constants import TS
 from src.resources import Costs
 from src.sprites import Spritesheet
+from src.ui import VillagerMenu, Menu, MilitaryMenu
 
 
 class AttackType(Enum):
@@ -47,6 +48,9 @@ class MobUnit:
     def draw(self, sprites: Spritesheet):
         pass
 
+    def get_menu(self) -> Menu:
+        pass
+
 
 class Villager(MobUnit):
     def __init__(self):
@@ -70,6 +74,9 @@ class Villager(MobUnit):
         surface.blit(sprites.mobs[Villager][0 if self.gender == Gender.FEMALE else 1], (0, 0))
         return surface
 
+    def get_menu(self):
+        return VillagerMenu()
+
 
 class Ruffian(MobUnit):
     def __init__(self):
@@ -86,6 +93,9 @@ class Ruffian(MobUnit):
             45,
             Costs(60, 0, 10, 0),
         )
+
+    def get_menu(self):
+        return MilitaryMenu()
 
 
 class Footman(MobUnit):
@@ -109,6 +119,9 @@ class Footman(MobUnit):
         surface.blit(sprites.mobs[Footman][0], (0, 0))
         return surface
 
+    def get_menu(self):
+        return MilitaryMenu()
+
 
 class Swordsman(MobUnit):
     def __init__(self):
@@ -125,6 +138,9 @@ class Swordsman(MobUnit):
             60,
             Costs(100, 0, 25, 0),
         )
+
+    def get_menu(self):
+        return MilitaryMenu()
 
 
 class Rifleman(MobUnit):
@@ -143,6 +159,9 @@ class Rifleman(MobUnit):
             Costs(100, 25, 25, 0),
         )
 
+    def get_menu(self):
+        return MilitaryMenu()
+
 
 class Archer(MobUnit):
     def __init__(self):
@@ -160,6 +179,9 @@ class Archer(MobUnit):
             Costs(50, 40, 20, 0),
         )
 
+    def get_menu(self):
+        return MilitaryMenu()
+
 
 class Crossbowman(MobUnit):
     def __init__(self):
@@ -176,6 +198,9 @@ class Crossbowman(MobUnit):
             60,
             Costs(65, 50, 25, 0),
         )
+
+    def get_menu(self):
+        return MilitaryMenu()
 
 
 class Mob:

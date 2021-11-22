@@ -96,6 +96,11 @@ class BarracksMenu(Menu):
         self.draw_button(self.buttons[Actions.TRAIN_FOOTMAN], 2, 0)
 
 
+class EmptyMenu(Menu):
+    def redraw(self):
+        pass
+
+
 class Button:
     def __init__(self, label):
         self.font = self.button_font = pygame.font.Font('freesansbold.ttf', 24)
