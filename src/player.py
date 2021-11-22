@@ -3,7 +3,7 @@ from math import floor
 import pygame
 
 from src.building import Building, TownCenter, create_building_from_action
-from src.constants import Colors, HEIGHT, WIDTH, TS
+from src.constants import Colors, HEIGHT, WIDTH, TS, MAX_ALPHA
 from src.mob import Mob, Villager
 from src.pathfind import create_neighbors
 from src.ui import ProgressBar
@@ -43,7 +43,9 @@ class Player:
         for building in self.buildings:
             surface = building.unit.draw(self.sprites)
             if not building.built:
-                surface.set_alpha(64 + ((128 * (building.built_amount / building.unit.build_time)) / 2))
+                surface.set_alpha(
+                    (MAX_ALPHA / 2) + ((MAX_ALPHA * (building.built_amount / building.unit.build_time)) / 2)
+                )
                 building.progress_bar.draw()
                 surface.blit(building.progress_bar.surface, (0, 13))
             scene.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
