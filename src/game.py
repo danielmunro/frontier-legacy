@@ -3,10 +3,10 @@ from math import floor, sqrt
 import pygame
 import sys
 
-from src.building import Building, create_building_from_action, TownCenter, Barracks
+from src.building import TownCenter, Barracks
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
 from src.coords import is_within, px_to_tile, floor_coords
-from src.mob import Mob, Villager, Footman
+from src.mob import Villager, Footman
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
 from src.player import Player
@@ -157,27 +157,19 @@ class Game:
         for player in self.players:
             for mob in player.mobs:
                 if mob.move_to:
-                    if mob.last_move_ticks is None:
-                        mob.last_move_ticks = ticks
-                    tick_diff = ticks - mob.last_move_ticks
-                    if tick_diff < mob.unit.movement_speed:
+                    if not mob.can_move(ticks):
                         continue
                     if not mob.path:
                         mob.path = get_path(self, mob.coords, mob.move_to)
-                    try:
-                        move_to = mob.path.pop(0)
-                    except IndexError:
-                        mob.move_to = None
+                    move_to = mob.get_next_path()
+                    if not move_to:
                         continue
                     if not self.is_passable(move_to):
                         mob.reset()
                         if mob.coords in stationed:
                             self._move_mob_disperse(mob, stationed, ticks)
                         continue
-                    mob.coords = move_to
-                    mob.last_move_ticks = ticks
-                    if mob.move_to == move_to:
-                        mob.reset()
+                    mob.move(ticks, move_to)
                 elif mob.coords in stationed:
                     self._move_mob_disperse(mob, stationed, ticks)
                 else:

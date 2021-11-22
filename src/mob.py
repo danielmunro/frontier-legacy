@@ -192,7 +192,25 @@ class Mob:
         self.hp = unit.hp
         self.coords = coords
 
+    def get_next_path(self):
+        try:
+            return self.path.pop(0)
+        except IndexError:
+            self.move_to = None
+
     def reset(self):
         self.move_to = None
         self.last_move_ticks = None
         self.path = None
+
+    def can_move(self, ticks):
+        if self.last_move_ticks is None:
+            self.last_move_ticks = ticks
+        tick_diff = ticks - self.last_move_ticks
+        return tick_diff > self.unit.movement_speed
+
+    def move(self, ticks, coords):
+        self.coords = coords
+        self.last_move_ticks = ticks
+        if self.move_to == coords:
+            self.reset()
