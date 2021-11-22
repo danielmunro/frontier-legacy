@@ -179,18 +179,17 @@ class Crossbowman(MobUnit):
 
 
 class Mob:
-    selected = False
-    move_to = None
-    last_move_ticks = None
-    path = None
-    to_build = None
-    time_built = 0
-    last_built_ticks = 0
-
     def __init__(self, unit: MobUnit, coords):
         self.unit = unit
         self.hp = unit.hp
         self.coords = coords
+        self.selected = False
+        self.move_to = None
+        self.last_move_ticks = None
+        self.path = None
+        self.to_build = None
+        self.time_built = 0
+        self.last_built_ticks = 0
 
     def get_next_path(self):
         try:
