@@ -89,17 +89,16 @@ class Barracks(BuildingUnit):
 
 
 class Building:
-    selected = False
-    built = False
-    built_amount = 0
-    last_build_tick = 0
-    queue = []
-
     def __init__(self, unit: BuildingUnit, coords):
         self.unit = unit
         self.hp = unit.hp
         self.coords = coords
         self.progress_bar = ProgressBar()
+        self.selected = False
+        self.built = False
+        self.built_amount = 0
+        self.last_build_tick = 0
+        self.queue = []
 
 
 def create_building_from_action(action):

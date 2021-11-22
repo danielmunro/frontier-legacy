@@ -3,7 +3,7 @@ from math import floor
 import pygame.display
 from pygame import Surface
 
-from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH
+from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, MAX_ALPHA
 
 
 def create_buttons():
@@ -29,6 +29,7 @@ class Menu:
         self.buttons = create_buttons()
         coords = pygame.display.get_window_size()
         self.surface = Surface([coords[0], MENU_HEIGHT])
+        self.enabled = True
 
     def handle_click_event(self, pos):
         for b in self.buttons.values():
@@ -36,6 +37,8 @@ class Menu:
                 b.is_button_pressed = True
 
     def map_click_to_action(self, pos):
+        if not self.enabled:
+            return
         for k in self.buttons:
             if self._is_click_on_button(self.buttons[k], pos):
                 return k
@@ -56,6 +59,8 @@ class Menu:
     def draw_button(self, button, x, y):
         surface = button.render_button()
         height = surface.get_height()
+        if not self.enabled:
+            surface.set_alpha(MAX_ALPHA / 2)
         self.surface.blit(surface,
                           (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y)))
         button.coords = (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y))
@@ -101,8 +106,10 @@ class Button:
         self.size = rendered.get_size()
         self.surface = Surface([self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)])
         self.coords = (0, 0)
+        self.disabled = False
 
     def render_button(self):
+        self.surface.fill(Colors.BLACK.value)
         self.surface.blit(self._render_text(), (PADDING, PADDING))
         pygame.draw.rect(
             self.surface,

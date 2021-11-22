@@ -101,6 +101,8 @@ class Player:
                     mob_building = to_build[building.unit.action]
                 except KeyError:
                     continue
+                if not building.last_build_tick:
+                    building.last_build_tick = ticks
                 amount = floor((ticks - building.last_build_tick) / 1000)
                 if amount > 1 and mob_building is not None:
                     neighbors = create_neighbors(building.coords)
