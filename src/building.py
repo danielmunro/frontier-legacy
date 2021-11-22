@@ -108,6 +108,26 @@ class LumberMill(BuildingUnit):
         return surface
 
 
+class Mill(BuildingUnit):
+    def __init__(self):
+        super().__init__(
+            1600,
+            0,
+            30,
+            Costs(0, 150, 0, 0),
+            Actions.BUILD_MILL,
+            1,
+        )
+
+    def trains(self) -> list[MobUnit]:
+        return []
+
+    def draw(self, sprites: Spritesheet):
+        surface = pygame.Surface([TS, TS]).convert_alpha()
+        surface.blit(sprites.buildings[Mill][0], (0, 0))
+        return surface
+
+
 class Building:
     def __init__(self, unit: BuildingUnit, coords):
         self.unit = unit
@@ -128,3 +148,5 @@ def create_building_from_action(action):
         return Barracks()
     elif action == Actions.BUILD_LUMBER_MILL:
         return LumberMill()
+    elif action == Actions.BUILD_MILL:
+        return Mill()
