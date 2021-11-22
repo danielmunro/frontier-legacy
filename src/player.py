@@ -116,6 +116,8 @@ class Player:
                     building.progress_bar.amount_completed = building.built_amount / building.unit.build_time
                     if building.built_amount >= building.unit.build_time:
                         building.built = True
+                        if building.menu:
+                            building.menu.enabled = True
                     building.last_build_tick = ticks
 
     def is_blocking(self, coords):

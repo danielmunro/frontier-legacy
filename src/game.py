@@ -136,17 +136,18 @@ class Game:
             building_start = building.coords
             building_end = (building.coords[0] + building.unit.size, building.coords[1] + building.unit.size)
             if is_within((start, end), (building_start, building_end)):
-                clicked = building.unit
+                clicked = building
                 built = building.built
                 building.selected = True
         for mob in player.mobs:
             if floor(start[0]) <= mob.coords[0] <= floor(end[0]) and \
                     floor(start[1]) <= mob.coords[1] <= floor(end[1]):
-                clicked = mob.unit
+                clicked = mob
                 mob.selected = True
         if clicked:
-            self.menu = get_ui_from_unit(clicked)
+            self.menu = get_ui_from_unit(clicked.unit)
             self.menu.enabled = built
+            clicked.menu = self.menu
         else:
             self.menu = None
         self.mouse_down_start = None

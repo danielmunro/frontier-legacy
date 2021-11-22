@@ -73,7 +73,7 @@ class Barracks(BuildingUnit):
         super().__init__(
             1600,
             0,
-            40,
+            10,
             Costs(0, 150, 0, 0),
             Actions.BUILD_BARRACKS,
             1,
@@ -139,6 +139,7 @@ class Building:
         self.built_amount = 0
         self.last_build_tick = 0
         self.queue = []
+        self.menu = None
 
 
 def create_building_from_action(action):

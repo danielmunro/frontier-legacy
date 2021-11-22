@@ -59,8 +59,7 @@ class Menu:
     def draw_button(self, button, x, y):
         surface = button.render_button()
         height = surface.get_height()
-        if not self.enabled:
-            surface.set_alpha(MAX_ALPHA / 2)
+        surface.set_alpha(MAX_ALPHA if self.enabled else MAX_ALPHA / 2)
         self.surface.blit(surface,
                           (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y)))
         button.coords = (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y))
