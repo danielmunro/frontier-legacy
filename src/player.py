@@ -6,7 +6,6 @@ from src.building import Building, TownCenter, create_building_from_action
 from src.constants import Colors, HEIGHT, WIDTH, TS, MAX_ALPHA
 from src.mob import Mob, Villager
 from src.pathfind import create_neighbors
-from src.ui import ProgressBar
 
 
 def get_start_buildings(coords):
