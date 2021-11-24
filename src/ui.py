@@ -2,6 +2,7 @@ from math import floor
 
 import pygame.display
 from pygame import Surface
+import sys
 
 from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, MAX_ALPHA, WIDTH, TS
 
@@ -29,6 +30,8 @@ class Menu:
         self.buttons = create_buttons()
         coords = pygame.display.get_window_size()
         self.surface = Surface([coords[0], MENU_HEIGHT])
+        self.player = None
+        self.all_units = []
         self.enabled = True
 
     def handle_click_event(self, pos):
@@ -40,7 +43,7 @@ class Menu:
         if not self.enabled:
             return
         for k in self.buttons:
-            if self._is_click_on_button(self.buttons[k], pos):
+            if self._is_click_on_button(self.buttons[k], pos) and self._can_afford(k):
                 return k
 
     def reset_ui_elements(self):
@@ -56,44 +59,58 @@ class Menu:
     def redraw(self):
         pass
 
-    def draw_button(self, button, x, y):
+    def draw_button(self, action: Actions, x, y):
+        button = self.buttons[action]
         surface = button.render_button()
         height = surface.get_height()
-        surface.set_alpha(MAX_ALPHA if self.enabled else MAX_ALPHA / 2)
+
+        surface.set_alpha(MAX_ALPHA if self.enabled and self._can_afford(action) else MAX_ALPHA / 2)
         self.surface.blit(surface,
                           (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y)))
         button.coords = (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y))
 
+    def _can_afford(self, action: Actions):
+        try:
+            to_create = next(filter(lambda i: i.action == action, self.all_units))
+            if to_create.costs.food > self.player.food or \
+                    to_create.costs.wood > self.player.wood or \
+                    to_create.costs.gold > self.player.gold or \
+                    to_create.costs.stone > self.player.stone:
+                return False
+        except StopIteration:
+            pass
+        return True
+
 
 class VillagerMenu(Menu):
     def redraw(self):
-        self.draw_button(self.buttons[Actions.BUILD_HOUSE], 2, 0)
-        self.draw_button(self.buttons[Actions.BUILD_LUMBER_MILL], 2, 1)
-        self.draw_button(self.buttons[Actions.BUILD_MILL], 2, 2)
-        self.draw_button(self.buttons[Actions.BUILD_BARRACKS], 2, 3)
+        self.draw_button(Actions.BUILD_HOUSE, 2, 0)
+        self.draw_button(Actions.BUILD_LUMBER_MILL, 2, 1)
+        self.draw_button(Actions.BUILD_MILL, 2, 2)
+        self.draw_button(Actions.BUILD_BARRACKS, 2, 3)
 
-        self.draw_button(self.buttons[Actions.MOVE], 3, 0)
-        self.draw_button(self.buttons[Actions.HARVEST], 3, 1)
-        self.draw_button(self.buttons[Actions.BUILD], 3, 2)
-        self.draw_button(self.buttons[Actions.ATTACK], 3, 3)
-        self.draw_button(self.buttons[Actions.GARRISON], 3, 4)
+        self.draw_button(Actions.MOVE, 3, 0)
+        self.draw_button(Actions.HARVEST, 3, 1)
+        self.draw_button(Actions.BUILD, 3, 2)
+        self.draw_button(Actions.ATTACK, 3, 3)
+        self.draw_button(Actions.GARRISON, 3, 4)
 
 
 class MilitaryMenu(Menu):
     def redraw(self):
-        self.draw_button(self.buttons[Actions.MOVE], 3, 0)
-        self.draw_button(self.buttons[Actions.ATTACK], 3, 1)
-        self.draw_button(self.buttons[Actions.GARRISON], 3, 2)
+        self.draw_button(Actions.MOVE, 3, 0)
+        self.draw_button(Actions.ATTACK, 3, 1)
+        self.draw_button(Actions.GARRISON, 3, 2)
 
 
 class TownCenterMenu(Menu):
     def redraw(self):
-        self.draw_button(self.buttons[Actions.TRAIN_VILLAGER], 2, 0)
+        self.draw_button(Actions.TRAIN_VILLAGER, 2, 0)
 
 
 class BarracksMenu(Menu):
     def redraw(self):
-        self.draw_button(self.buttons[Actions.TRAIN_FOOTMAN], 2, 0)
+        self.draw_button(Actions.TRAIN_FOOTMAN, 2, 0)
 
 
 class EmptyMenu(Menu):

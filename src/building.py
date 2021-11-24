@@ -169,3 +169,12 @@ def create_building_from_action(action):
         return LumberMill()
     elif action == Actions.BUILD_MILL:
         return Mill()
+
+
+all_buildings = [
+    TownCenter(),
+    House(),
+    Barracks(),
+    LumberMill(),
+    Mill(),
+]

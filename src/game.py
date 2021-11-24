@@ -3,10 +3,10 @@ from math import floor, sqrt
 import pygame
 import sys
 
-from src.building import TownCenter, Barracks
+from src.building import TownCenter, Barracks, all_buildings
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
 from src.coords import is_within, px_to_tile, floor_coords
-from src.mob import Villager, Footman
+from src.mob import Villager, Footman, all_mobs
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
 from src.player import Player
@@ -20,6 +20,7 @@ class Game:
     is_playing = True
     action = None
     menu = None
+    all_units = all_mobs + all_buildings
 
     def __init__(self, screen, scene: Scene, players: list[Player], sprites):
         self.screen = screen
@@ -145,6 +146,8 @@ class Game:
         if clicked:
             self.menu = clicked.unit.get_menu()
             self.menu.enabled = built
+            self.menu.player = player
+            self.menu.all_units = self.all_units
             clicked.menu = self.menu
         else:
             self.menu = None

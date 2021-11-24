@@ -42,6 +42,11 @@ class Actions(Enum):
 
     TRAIN_VILLAGER = 19
     TRAIN_FOOTMAN = 20
+    TRAIN_RUFFIAN = 21
+    TRAIN_SWORDSMAN = 22
+    TRAIN_RIFLEMAN = 23
+    TRAIN_ARCHER = 24
+    TRAIN_CROSSBOWMAN = 25
 
 
 class Colors(Enum):

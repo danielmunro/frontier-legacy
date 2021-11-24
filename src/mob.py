@@ -2,7 +2,7 @@ from enum import Enum
 
 import pygame
 
-from src.constants import TS
+from src.constants import TS, Actions
 from src.resources import Costs
 from src.sprites import Spritesheet
 from src.ui import VillagerMenu, Menu, MilitaryMenu
@@ -32,6 +32,7 @@ class MobUnit:
             movement_speed,
             build_time,
             costs,
+            action,
     ):
         self.hp = hp
         self.attack = attack
@@ -44,6 +45,7 @@ class MobUnit:
         self.movement_speed = movement_speed
         self.build_time = build_time
         self.costs = costs
+        self.action = action
 
     def draw(self, sprites: Spritesheet):
         pass
@@ -67,6 +69,7 @@ class Villager(MobUnit):
             800,
             30,
             Costs(25, 0, 0, 0),
+            Actions.TRAIN_VILLAGER,
         )
 
     def draw(self, sprites: Spritesheet):
@@ -92,6 +95,7 @@ class Ruffian(MobUnit):
             1,
             45,
             Costs(60, 0, 10, 0),
+            Actions.TRAIN_RUFFIAN
         )
 
     def get_menu(self):
@@ -112,6 +116,7 @@ class Footman(MobUnit):
             800,
             30,
             Costs(75, 0, 20, 0),
+            Actions.TRAIN_FOOTMAN,
         )
 
     def draw(self, sprites: Spritesheet):
@@ -137,6 +142,7 @@ class Swordsman(MobUnit):
             1,
             60,
             Costs(100, 0, 25, 0),
+            Actions.TRAIN_SWORDSMAN,
         )
 
     def get_menu(self):
@@ -157,6 +163,7 @@ class Rifleman(MobUnit):
             1,
             60,
             Costs(100, 25, 25, 0),
+            Actions.TRAIN_RIFLEMAN,
         )
 
     def get_menu(self):
@@ -177,6 +184,7 @@ class Archer(MobUnit):
             1,
             55,
             Costs(50, 40, 20, 0),
+            Actions.TRAIN_ARCHER,
         )
 
     def get_menu(self):
@@ -197,6 +205,7 @@ class Crossbowman(MobUnit):
             1,
             60,
             Costs(65, 50, 25, 0),
+            Actions.TRAIN_CROSSBOWMAN,
         )
 
     def get_menu(self):
@@ -238,3 +247,14 @@ class Mob:
         self.last_move_ticks = ticks
         if self.move_to == coords:
             self.reset()
+
+
+all_mobs = [
+    Villager(),
+    Ruffian(),
+    Footman(),
+    Swordsman(),
+    Archer(),
+    Crossbowman(),
+    Rifleman(),
+]
