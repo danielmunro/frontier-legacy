@@ -204,6 +204,7 @@ class Game:
             if self.is_passable(neighbor) and neighbor not in stationed:
                 mob.move_to = neighbor
                 mob.last_move_ticks = ticks
+                stationed[neighbor] = mob
                 return
 
     def is_passable(self, coords):
