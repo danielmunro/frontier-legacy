@@ -3,7 +3,7 @@ from random import random, randrange
 from pygame import Surface
 
 from src.constants import SCENE_SIZE, TS, HEIGHT, WIDTH
-from src.resources import get_resource_from_index
+from src.resources import get_resource_from_index, Resource
 
 
 class Scene:
@@ -12,6 +12,24 @@ class Scene:
         self.blocking = blocking
         self.resources = resources
         self.sprites = sprites
+        self.resource_amounts = {}
+        for y in range(len(self.resources)):
+            for x in range(len(self.resources[y])):
+                r = self.resources[y][x]
+                if r:
+                    amount = 0
+                    if r == Resource.FOOD:
+                        amount = 150
+                    elif r == Resource.WOOD:
+                        amount = 200
+                    elif r == Resource.GOLD:
+                        amount = 600
+                    elif r == Resource.STONE:
+                        amount = 400
+                    self.resource_amounts[(x, y)] = {
+                        "resource": r,
+                        "amount": amount,
+                    }
 
     def is_passable(self, coords):
         x = coords[0]

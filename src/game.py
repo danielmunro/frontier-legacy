@@ -6,7 +6,7 @@ import sys
 from src.building import TownCenter, Barracks, all_buildings
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
 from src.coords import is_within, px_to_tile, floor_coords
-from src.mob import Villager, Footman, all_mobs
+from src.mob import Villager, Footman, all_mobs, Mob
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
 from src.player import Player
@@ -35,8 +35,6 @@ class Game:
     def loop(self, ticks):
         self._handle_events()
         self._unit_move(ticks)
-        self._unit_harvest()
-        self._unit_attack()
         self._build_buildings(ticks)
         self._train_mobs(ticks)
         self._draw_scene()
@@ -115,6 +113,16 @@ class Game:
         if self.action is not None:
             if self.action == Actions.MOVE:
                 self._start_moving_mobs(end)
+                self.action = None
+                self.mouse_down_start = None
+                return
+            elif self.action == Actions.HARVEST:
+                self._start_moving_mobs(end)
+                selected_mobs = self._get_selected()
+                for sel in selected_mobs:
+                    nearest = self._nearest_available_neighbor(sel.coords, end)
+                    sel.set_move_to(nearest)
+                    sel.harvest_coords = end
                 self.action = None
                 self.mouse_down_start = None
                 return
@@ -208,12 +216,6 @@ class Game:
         for player in self.players:
             self.screen.blit(player.draw(), (0, 0))
 
-    def _unit_attack(self):
-        pass
-
-    def _unit_harvest(self):
-        pass
-
     def _draw_menu(self):
         coords = self.screen.get_size()
         self.menu.surface.fill(Colors.MENU_BLUE.value)
@@ -237,3 +239,10 @@ class Game:
                 ((offset_x * TS) + TS, PADDING + 4),
             )
             offset_x += 2
+
+    def _get_selected(self) -> list[Mob]:
+        mobs = []
+        for mob in self.players[0].mobs:
+            if mob.selected:
+                mobs.append(mob)
+        return mobs

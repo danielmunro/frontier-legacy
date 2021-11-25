@@ -1,4 +1,5 @@
 from enum import Enum
+from math import floor
 
 import pygame
 
@@ -224,6 +225,7 @@ class Mob:
         self.to_build = None
         self.time_built = 0
         self.last_built_ticks = 0
+        self.harvest_coords = None
 
     def get_next_path(self):
         try:
@@ -247,6 +249,9 @@ class Mob:
         self.last_move_ticks = ticks
         if self.move_to == coords:
             self.reset()
+
+    def set_move_to(self, coords):
+        self.move_to = (floor(coords[0]), floor(coords[1]))
 
 
 all_mobs = [
