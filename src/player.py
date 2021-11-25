@@ -26,16 +26,15 @@ def get_start_mobs(start_coords):
 
 
 class Player:
-    food = 100
-    wood = 100
-    gold = 50
-    stone = 0
-
     def __init__(self, mobs: list[Mob], buildings: list[Building], sprites, is_computer=True):
         self.mobs = mobs
         self.buildings = buildings
         self.sprites = sprites
         self.is_computer = is_computer
+        self.food = 500
+        self.wood = 500
+        self.gold = 500
+        self.stone = 0
 
     def draw(self):
         scene = pygame.Surface([WIDTH, HEIGHT]).convert_alpha()
