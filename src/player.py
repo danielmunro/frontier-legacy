@@ -129,7 +129,12 @@ class Player:
                 mob.move_to = (floor(coords[0]), floor(coords[1]))
 
     def villager_build(self, action, coords) -> list[Mob]:
-        self.buildings.append(Building(create_building_from_action(action), coords))
+        building_unit = create_building_from_action(action)
+        self.food -= building_unit.costs.food
+        self.wood -= building_unit.costs.wood
+        self.gold -= building_unit.costs.gold
+        self.stone -= building_unit.costs.stone
+        self.buildings.append(Building(building_unit, coords))
         mobs = []
         for mob in self.mobs:
             if mob.selected:
@@ -138,6 +143,10 @@ class Player:
         return mobs
 
     def train_mob(self, building_class, mob):
+        self.food -= mob.costs.food
+        self.wood -= mob.costs.wood
+        self.gold -= mob.costs.gold
+        self.stone -= mob.costs.stone
         for building in self.buildings:
             if building.selected and building.unit.__class__ == building_class:
                 building.queue.append(Mob(mob, (building.coords[0], building.coords[1] + building.unit.size)))
