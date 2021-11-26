@@ -10,6 +10,7 @@ from src.mob import Villager, Footman, all_mobs, Mob
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors
 from src.player import Player
+from src.resources import Resource
 from src.scene import Scene
 from src.ui import TopMenu
 
@@ -78,6 +79,7 @@ class Game:
     def _harvest(self, ticks):
         for player in self.players:
             for mob in player.mobs:
+                # part 1 -- collect
                 if mob.unit.__class__ == Villager and mob.harvest_coords is not None and not mob.move_to and \
                         (mob.last_collection_ticks is None or ticks - mob.last_collection_ticks > 1000) and \
                         mob.amount_collected < 10:
@@ -100,8 +102,24 @@ class Game:
                                 ))
                                 print("resource drop off", building)
                                 mob.move_to = self._nearest_available_neighbor(mob.coords, building.coords)
-                                # part 2 -- return to collection building
-                # part 3 -- go back to harvest more
+                                mob.drop_off_building = building
+                # part 2 -- return to drop off building
+                if mob.unit.__class__ == Villager and mob.drop_off_building is not None:
+                    neighbors = create_neighbors(mob.coords)
+                    for neighbor in neighbors:
+                        if neighbor == mob.drop_off_building.coords:
+                            if mob.resource_harvesting == Resource.FOOD:
+                                player.food += mob.amount_collected
+                            elif mob.resource_harvesting == Resource.WOOD:
+                                player.wood += mob.amount_collected
+                            elif mob.resource_harvesting == Resource.GOLD:
+                                player.gold += mob.amount_collected
+                            elif mob.resource_harvesting == Resource.STONE:
+                                player.stone += mob.amount_collected
+                            mob.amount_collected = 0
+                            mob.drop_off_building = None
+                            break
+                # part 3 -- go back to harvest more -- find nearest resource
 
     def _train_mobs(self, ticks):
         for player in self.players:

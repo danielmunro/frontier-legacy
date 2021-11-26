@@ -230,6 +230,7 @@ class Mob:
         self.resource_harvesting = None
         self.amount_collected = 0
         self.last_collection_ticks = None
+        self.drop_off_building = None
 
     def get_next_path(self):
         try:
