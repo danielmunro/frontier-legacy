@@ -79,10 +79,9 @@ class Game:
     def _harvest(self, ticks):
         for player in self.players:
             for mob in player.mobs:
-                # part 1 -- collect
                 if mob.unit.__class__ == Villager and mob.harvest_coords is not None and not mob.move_to and \
                         (mob.last_collection_ticks is None or ticks - mob.last_collection_ticks > 1000) and \
-                        mob.amount_collected < 10:
+                        mob.amount_collected < player.villager_collect_amount:
                     neighbors = create_neighbors(mob.coords)
                     for neighbor in neighbors:
                         try:
@@ -93,17 +92,13 @@ class Game:
                             amount["amount"] -= 1
                             mob.amount_collected += 1
                             mob.last_collection_ticks = ticks
-                            print("amount harvested", mob.amount_collected)
-                            if mob.amount_collected == 10:
-                                print("debug", mob.resource_harvesting, player.buildings[0].unit.resource_drop_off)
+                            if mob.amount_collected == player.villager_collect_amount:
                                 building = next(filter(
                                     lambda b: mob.resource_harvesting in b.unit.resource_drop_off,
                                     player.buildings
                                 ))
-                                print("resource drop off", building)
                                 mob.move_to = self._nearest_available_neighbor(mob.coords, building.coords)
                                 mob.drop_off_building = building
-                # part 2 -- return to drop off building
                 if mob.unit.__class__ == Villager and mob.drop_off_building is not None:
                     neighbors = create_neighbors(mob.coords)
                     for neighbor in neighbors:
@@ -118,8 +113,8 @@ class Game:
                                 player.stone += mob.amount_collected
                             mob.amount_collected = 0
                             mob.drop_off_building = None
+                            mob.move_to = self._nearest_available_neighbor(mob.coords, floor_coords(mob.harvest_coords))
                             break
-                # part 3 -- go back to harvest more -- find nearest resource
 
     def _train_mobs(self, ticks):
         for player in self.players:

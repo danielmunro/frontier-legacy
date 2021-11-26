@@ -35,6 +35,7 @@ class Player:
         self.wood = 500
         self.gold = 500
         self.stone = 0
+        self.villager_collect_amount = 10
 
     def draw(self):
         scene = pygame.Surface([WIDTH, HEIGHT]).convert_alpha()
