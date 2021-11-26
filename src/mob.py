@@ -225,7 +225,11 @@ class Mob:
         self.to_build = None
         self.time_built = 0
         self.last_built_ticks = 0
+        # self.return_to_coords = None
         self.harvest_coords = None
+        self.resource_harvesting = None
+        self.amount_collected = 0
+        self.last_collection_ticks = None
 
     def get_next_path(self):
         try:

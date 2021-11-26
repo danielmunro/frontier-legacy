@@ -15,7 +15,7 @@ def is_within(rect1, rect2):
 
 
 def px_to_tile(coords):
-    return floor(coords[0] / TS), floor(coords[1] / TS)
+    return coords[0] / TS, coords[1] / TS
 
 
 def floor_coords(coords):

@@ -37,6 +37,7 @@ class Game:
         self._unit_move(ticks)
         self._build_buildings(ticks)
         self._train_mobs(ticks)
+        self._harvest(ticks)
         self._draw_scene()
         self._draw_players()
         self._draw_mouse_border()
@@ -73,6 +74,29 @@ class Game:
                 if self.menu:
                     self.menu.reset_ui_elements()
                 self._evaluate_mouse_click()
+
+    def _harvest(self, ticks):
+        for player in self.players:
+            for mob in player.mobs:
+                if mob.unit.__class__ == Villager and mob.harvest_coords is not None and not mob.move_to and \
+                        (mob.last_collection_ticks is None or ticks - mob.last_collection_ticks > 1000) and \
+                        mob.amount_collected < 10:
+                    print("sanity")
+                    neighbors = create_neighbors(mob.coords)
+                    for neighbor in neighbors:
+                        try:
+                            amount = self.scene.resource_amounts[neighbor]
+                        except KeyError:
+                            continue
+                        print("found amount")
+                        if amount is not None and amount["resource"] == mob.resource_harvesting:
+                            amount["amount"] -= 1
+                            mob.amount_collected += 1
+                            mob.last_collection_ticks = ticks
+                            print("amount harvested", mob.amount_collected)
+
+                # part 2 -- return to collection building
+                # part 3 -- go back to harvest more
 
     def _train_mobs(self, ticks):
         for player in self.players:
@@ -119,10 +143,12 @@ class Game:
             elif self.action == Actions.HARVEST:
                 self._start_moving_mobs(end)
                 selected_mobs = self._get_selected()
+                floor_end = floor_coords(end)
                 for sel in selected_mobs:
-                    nearest = self._nearest_available_neighbor(sel.coords, end)
+                    nearest = self._nearest_available_neighbor(sel.coords, floor_end)
                     sel.set_move_to(nearest)
                     sel.harvest_coords = end
+                    sel.resource_harvesting = self.scene.resource_amounts[floor_end]["resource"]
                 self.action = None
                 self.mouse_down_start = None
                 return
