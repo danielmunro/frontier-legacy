@@ -2,18 +2,19 @@ import pygame
 
 from src.constants import TS, Actions
 from src.mob import MobUnit, Villager
-from src.resources import Costs
+from src.resources import Costs, Resource
 from src.sprites import Spritesheet
 from src.ui import ProgressBar, Menu, TownCenterMenu, EmptyMenu, BarracksMenu
 
 
 class BuildingUnit:
-    def __init__(self, hp, defense, build_time, costs, action, size=1):
+    def __init__(self, hp, defense, build_time, costs, action, resource_drop_off, size):
         self.hp = hp
         self.defense = defense
         self.build_time = build_time
         self.costs = costs
         self.action = action
+        self.resource_drop_off = resource_drop_off
         self.size = size
 
     def trains(self) -> list[MobUnit]:
@@ -34,7 +35,8 @@ class TownCenter(BuildingUnit):
             240,
             Costs(0, 400, 0, 100),
             Actions.BUILD_TOWN_CENTER,
-            2
+            [Resource.FOOD, Resource.WOOD, Resource.GOLD, Resource.STONE],
+            2,
         )
 
     def trains(self) -> list[MobUnit]:
@@ -62,6 +64,7 @@ class House(BuildingUnit):
             20,
             Costs(0, 50, 0, 0),
             Actions.BUILD_HOUSE,
+            [],
             1,
         )
 
@@ -85,6 +88,7 @@ class Barracks(BuildingUnit):
             10,
             Costs(0, 150, 0, 0),
             Actions.BUILD_BARRACKS,
+            [],
             1,
         )
 
@@ -108,6 +112,7 @@ class LumberMill(BuildingUnit):
             30,
             Costs(0, 150, 0, 0),
             Actions.BUILD_LUMBER_MILL,
+            [Resource.WOOD],
             1,
         )
 
@@ -131,6 +136,7 @@ class Mill(BuildingUnit):
             30,
             Costs(0, 150, 0, 0),
             Actions.BUILD_MILL,
+            [Resource.FOOD],
             1,
         )
 

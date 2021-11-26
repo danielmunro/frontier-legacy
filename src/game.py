@@ -81,21 +81,26 @@ class Game:
                 if mob.unit.__class__ == Villager and mob.harvest_coords is not None and not mob.move_to and \
                         (mob.last_collection_ticks is None or ticks - mob.last_collection_ticks > 1000) and \
                         mob.amount_collected < 10:
-                    print("sanity")
                     neighbors = create_neighbors(mob.coords)
                     for neighbor in neighbors:
                         try:
                             amount = self.scene.resource_amounts[neighbor]
                         except KeyError:
                             continue
-                        print("found amount")
                         if amount is not None and amount["resource"] == mob.resource_harvesting:
                             amount["amount"] -= 1
                             mob.amount_collected += 1
                             mob.last_collection_ticks = ticks
                             print("amount harvested", mob.amount_collected)
-
-                # part 2 -- return to collection building
+                            if mob.amount_collected == 10:
+                                print("debug", mob.resource_harvesting, player.buildings[0].unit.resource_drop_off)
+                                building = next(filter(
+                                    lambda b: mob.resource_harvesting in b.unit.resource_drop_off,
+                                    player.buildings
+                                ))
+                                print("resource drop off", building)
+                                mob.move_to = self._nearest_available_neighbor(mob.coords, building.coords)
+                                # part 2 -- return to collection building
                 # part 3 -- go back to harvest more
 
     def _train_mobs(self, ticks):

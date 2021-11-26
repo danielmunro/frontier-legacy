@@ -3,7 +3,7 @@ from random import random, randrange
 from pygame import Surface
 
 from src.constants import SCENE_SIZE, TS, HEIGHT, WIDTH
-from src.resources import get_resource_from_index, Resource
+from src.resources import Resource
 
 
 class Scene:
@@ -44,8 +44,8 @@ class Scene:
                 surface.blit(self.sprites.terrain[index][(x + y) % 2 == 0], (x * TS, y * TS))
         for y in range(len(self.resources)):
             for x in range(len(self.resources[y])):
-                resource = get_resource_from_index(self.resources[y][x])
-                if resource is not None:
+                resource = self.resources[y][x]
+                if resource != 0:
                     surface.blit(self.sprites.resources[resource], (x * TS, y * TS))
         return surface
 
@@ -63,9 +63,9 @@ def create_resources(player_start_positions):
         for x in range(player[0] - 6, player[0] + 7):
             for y in range(player[1] - 6, player[1] + 7):
                 scene[y][x] = 0
-        add_main_patch(scene, player, randrange(1, 4), 2)
-        add_main_patch(scene, player, randrange(1, 4), 3)
-        add_main_patch(scene, player, randrange(1, 4), 4)
+        add_main_patch(scene, player, randrange(1, 4), Resource.FOOD)
+        add_main_patch(scene, player, randrange(1, 4), Resource.GOLD)
+        add_main_patch(scene, player, randrange(1, 4), Resource.STONE)
     return scene
 
 
@@ -96,10 +96,10 @@ def create_fruit_bushes(scene):
         for x in range(x_len):
             if not scene[y][x]:
                 percent = 0.001
-                if scene[y-1][x] == 4 or scene[y][x-1] == 4:
+                if scene[y-1][x] == Resource.FOOD or scene[y][x-1] == Resource.FOOD:
                     percent = 0.2
                 if random() < percent:
-                    scene[y][x] = 4
+                    scene[y][x] = Resource.FOOD
 
 
 def create_stone(scene):
@@ -109,10 +109,10 @@ def create_stone(scene):
         for x in range(x_len):
             if not scene[y][x]:
                 percent = 0.001
-                if scene[y-1][x] == 3 or scene[y][x-1] == 3:
+                if scene[y-1][x] == Resource.STONE or scene[y][x-1] == Resource.STONE:
                     percent = 0.15
                 if random() < percent:
-                    scene[y][x] = 3
+                    scene[y][x] = Resource.STONE
 
 
 def create_gold(scene):
@@ -122,10 +122,10 @@ def create_gold(scene):
         for x in range(x_len):
             if not scene[y][x]:
                 percent = 0.001
-                if scene[y-1][x] == 2 or scene[y][x-1] == 2:
+                if scene[y-1][x] == Resource.GOLD or scene[y][x-1] == Resource.GOLD:
                     percent = 0.15
                 if random() < percent:
-                    scene[y][x] = 2
+                    scene[y][x] = Resource.GOLD
 
 
 def create_forest(scene):
@@ -134,7 +134,7 @@ def create_forest(scene):
     for y in range(y_len):
         for x in range(x_len):
             percent = 0.01
-            if scene[y-1][x] == 1 or scene[y][x-1] == 1:
+            if scene[y-1][x] == Resource.WOOD or scene[y][x-1] == Resource.WOOD:
                 percent = 0.6
             if random() < percent:
-                scene[y][x] = 1
+                scene[y][x] = Resource.WOOD
