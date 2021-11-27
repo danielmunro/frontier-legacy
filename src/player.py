@@ -27,7 +27,11 @@ def get_start_mobs(start_coords):
 
 class Player:
     def __init__(
-            self, mobs: list[Mob], buildings: list[Building], sprites, is_computer=True):
+            self,
+            mobs: list[Mob],
+            buildings: list[Building],
+            sprites,
+            is_computer=True):
         self.mobs = mobs
         self.buildings = buildings
         self.sprites = sprites

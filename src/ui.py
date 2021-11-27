@@ -69,7 +69,8 @@ class Menu:
         surface.set_alpha(
             MAX_ALPHA if self.enabled and self._can_afford(action) else MAX_ALPHA / 2)
         self.surface.blit(surface,
-                          (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y)))
+                          (PADDING + (x * MENU_COLUMN_WIDTH),
+                           PADDING + (height * y)))
         button.coords = (PADDING + (x * MENU_COLUMN_WIDTH),
                          PADDING + (height * y))
 

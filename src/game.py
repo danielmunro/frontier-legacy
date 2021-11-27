@@ -128,10 +128,10 @@ class Game:
                             self, mob.coords, mob.resource_harvesting)
                     )
                 if mob.amount_collected == player.villager_collect_amount:
-                    building = next(filter(
-                        lambda b: mob.resource_harvesting in b.unit.resource_drop_off,
-                        player.buildings
-                    ))
+                    building = next(
+                        filter(
+                            lambda b: mob.resource_harvesting in b.unit.resource_drop_off,
+                            player.buildings))
                     mob.move_to = self._nearest_available_neighbor(
                         mob.coords, building.coords)
                     mob.drop_off_building = building
