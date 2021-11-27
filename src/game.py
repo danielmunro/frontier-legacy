@@ -82,49 +82,56 @@ class Game:
                 if mob.unit.__class__ == Villager and mob.harvest_coords is not None and not mob.move_to and \
                         (mob.last_collection_ticks is None or ticks - mob.last_collection_ticks > 1000) and \
                         mob.amount_collected < player.villager_collect_amount:
-                    neighbors = create_neighbors(mob.coords)
-                    for neighbor in neighbors:
-                        try:
-                            amount = self.scene.resource_amounts[neighbor]
-                        except KeyError:
-                            continue
-                        if amount is not None and amount["resource"] == mob.resource_harvesting:
-                            amount["amount"] -= 1
-                            mob.amount_collected += 1
-                            mob.last_collection_ticks = ticks
-                            if amount["amount"] < 1:
-                                del self.scene.resource_amounts[neighbor]
-                                self.scene.resources[neighbor[1]][neighbor[0]] = 0
-                                mob.move_to = self._nearest_available_neighbor(
-                                    mob.coords,
-                                    find_nearest_resource(self, mob.coords, mob.resource_harvesting)
-                                )
-                            if mob.amount_collected == player.villager_collect_amount:
-                                building = next(filter(
-                                    lambda b: mob.resource_harvesting in b.unit.resource_drop_off,
-                                    player.buildings
-                                ))
-                                mob.move_to = self._nearest_available_neighbor(mob.coords, building.coords)
-                                mob.drop_off_building = building
+                    self._villager_harvest_neighbor(player, mob, ticks)
                 if mob.unit.__class__ == Villager and mob.drop_off_building is not None:
-                    neighbors = create_neighbors(mob.coords)
-                    for neighbor in neighbors:
-                        if neighbor == mob.drop_off_building.coords:
-                            if mob.resource_harvesting == Resource.FOOD:
-                                player.food += mob.amount_collected
-                            elif mob.resource_harvesting == Resource.WOOD:
-                                player.wood += mob.amount_collected
-                            elif mob.resource_harvesting == Resource.GOLD:
-                                player.gold += mob.amount_collected
-                            elif mob.resource_harvesting == Resource.STONE:
-                                player.stone += mob.amount_collected
-                            mob.amount_collected = 0
-                            mob.drop_off_building = None
-                            mob.move_to = self._nearest_available_neighbor(
-                                mob.coords,
-                                find_nearest_resource(self, mob.coords, mob.resource_harvesting),
-                            )
-                            break
+                    self._villager_drop_off(player, mob)
+
+    def _villager_drop_off(self, player, mob):
+        neighbors = create_neighbors(mob.coords)
+        for neighbor in neighbors:
+            if neighbor == mob.drop_off_building.coords:
+                if mob.resource_harvesting == Resource.FOOD:
+                    player.food += mob.amount_collected
+                elif mob.resource_harvesting == Resource.WOOD:
+                    player.wood += mob.amount_collected
+                elif mob.resource_harvesting == Resource.GOLD:
+                    player.gold += mob.amount_collected
+                elif mob.resource_harvesting == Resource.STONE:
+                    player.stone += mob.amount_collected
+                mob.amount_collected = 0
+                mob.drop_off_building = None
+                mob.move_to = self._nearest_available_neighbor(
+                    mob.coords,
+                    find_nearest_resource(self, mob.coords, mob.resource_harvesting),
+                )
+                return
+
+    def _villager_harvest_neighbor(self, player, mob, ticks):
+        neighbors = create_neighbors(mob.coords)
+        for neighbor in neighbors:
+            try:
+                amount = self.scene.resource_amounts[neighbor]
+            except KeyError:
+                continue
+            if amount is not None and amount["resource"] == mob.resource_harvesting:
+                amount["amount"] -= 1
+                mob.amount_collected += 1
+                mob.last_collection_ticks = ticks
+                if amount["amount"] < 1:
+                    del self.scene.resource_amounts[neighbor]
+                    self.scene.resources[neighbor[1]][neighbor[0]] = 0
+                    mob.move_to = self._nearest_available_neighbor(
+                        mob.coords,
+                        find_nearest_resource(self, mob.coords, mob.resource_harvesting)
+                    )
+                if mob.amount_collected == player.villager_collect_amount:
+                    building = next(filter(
+                        lambda b: mob.resource_harvesting in b.unit.resource_drop_off,
+                        player.buildings
+                    ))
+                    mob.move_to = self._nearest_available_neighbor(mob.coords, building.coords)
+                    mob.drop_off_building = building
+                return
 
     def _train_mobs(self, ticks):
         for player in self.players:
