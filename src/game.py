@@ -95,6 +95,10 @@ class Game:
                             if amount["amount"] < 1:
                                 del self.scene.resource_amounts[neighbor]
                                 self.scene.resources[neighbor[1]][neighbor[0]] = 0
+                                mob.move_to = self._nearest_available_neighbor(
+                                    mob.coords,
+                                    find_nearest_resource(self, mob.coords, mob.resource_harvesting)
+                                )
                             if mob.amount_collected == player.villager_collect_amount:
                                 building = next(filter(
                                     lambda b: mob.resource_harvesting in b.unit.resource_drop_off,

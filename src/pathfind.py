@@ -71,7 +71,6 @@ def find_nearest_resource(game, start, resource: Resource):
         neighbor_coords = create_neighbors(this_move.coords)
         try:
             amounts = game.scene.resource_amounts[this_move.coords]
-            print(amounts)
             if amounts["resource"] == resource:
                 return this_move.coords
         except KeyError:
