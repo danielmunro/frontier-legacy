@@ -31,9 +31,9 @@ class Player:
         self.buildings = buildings
         self.sprites = sprites
         self.is_computer = is_computer
-        self.food = 500
-        self.wood = 500
-        self.gold = 500
+        self.food = 200
+        self.wood = 100
+        self.gold = 100
         self.stone = 0
         self.villager_collect_amount = 10
 

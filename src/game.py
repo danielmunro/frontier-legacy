@@ -4,7 +4,7 @@ import pygame
 import sys
 
 from src.building import TownCenter, Barracks, all_buildings
-from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
+from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS, SECOND_IN_MS
 from src.coords import is_within, px_to_tile, floor_coords
 from src.mob import Villager, Footman, all_mobs, Mob
 from src.mouse import get_abs_mouse
@@ -80,7 +80,7 @@ class Game:
         for player in self.players:
             for mob in player.mobs:
                 if mob.unit.__class__ == Villager and mob.harvest_coords is not None and not mob.move_to and \
-                        (mob.last_collection_ticks is None or ticks - mob.last_collection_ticks > 1000) and \
+                        (mob.last_collection_ticks is None or ticks - mob.last_collection_ticks > SECOND_IN_MS) and \
                         mob.amount_collected < player.villager_collect_amount:
                     self._villager_harvest_neighbor(player, mob, ticks)
                 if mob.unit.__class__ == Villager and mob.drop_off_building is not None:
