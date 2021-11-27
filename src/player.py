@@ -26,7 +26,8 @@ def get_start_mobs(start_coords):
 
 
 class Player:
-    def __init__(self, mobs: list[Mob], buildings: list[Building], sprites, is_computer=True):
+    def __init__(
+            self, mobs: list[Mob], buildings: list[Building], sprites, is_computer=True):
         self.mobs = mobs
         self.buildings = buildings
         self.sprites = sprites
@@ -43,11 +44,15 @@ class Player:
             surface = building.unit.draw(self.sprites)
             if not building.built:
                 surface.set_alpha(
-                    (MAX_ALPHA / 2) + ((MAX_ALPHA * (building.built_amount / building.unit.build_time)) / 2)
+                    (MAX_ALPHA / 2) + ((MAX_ALPHA *
+                                        (building.built_amount / building.unit.build_time)) / 2)
                 )
                 building.progress_bar.draw()
                 surface.blit(building.progress_bar.surface, (0, 13))
-            scene.blit(surface, (building.coords[0] * TS, building.coords[1] * TS))
+            scene.blit(
+                surface,
+                (building.coords[0] * TS,
+                 building.coords[1] * TS))
             if building.selected:
                 pygame.draw.rect(
                     scene,
@@ -112,7 +117,8 @@ class Player:
                     if not next_to:
                         continue
                     building.built_amount += amount
-                    building.progress_bar.amount_completed = building.built_amount / building.unit.build_time
+                    building.progress_bar.amount_completed = building.built_amount / \
+                        building.unit.build_time
                     if building.built_amount >= building.unit.build_time:
                         building.built = True
                         if building.menu:
@@ -150,5 +156,6 @@ class Player:
         self.stone -= mob.costs.stone
         for building in self.buildings:
             if building.selected and building.unit.__class__ == building_class:
-                building.queue.append(Mob(mob, (building.coords[0], building.coords[1] + building.unit.size)))
+                building.queue.append(
+                    Mob(mob, (building.coords[0], building.coords[1] + building.unit.size)))
                 return

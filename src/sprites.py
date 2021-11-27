@@ -11,7 +11,8 @@ class Spritesheet:
     resources = {}
 
     def __init__(self):
-        self.sheet = pygame.image.load("./resources/sprites.png").convert_alpha()
+        self.sheet = pygame.image.load(
+            "./resources/sprites.png").convert_alpha()
 
     def create(self, x, y):
         it = Surface([TS, TS]).convert_alpha()

@@ -41,7 +41,10 @@ def get_path(game, start, end):
         neighbor_coords = create_neighbors(this_move.coords)
         for neighbor_coord in neighbor_coords:
             if game.is_passable(neighbor_coord):
-                found = list(filter(lambda i: i.coords == neighbor_coord, known_nodes))
+                found = list(
+                    filter(
+                        lambda i: i.coords == neighbor_coord,
+                        known_nodes))
                 if len(found) == 0:
                     known_nodes.append(Node(neighbor_coord, cost, this_move))
                 elif cost < found[0].cost:
@@ -76,7 +79,10 @@ def find_nearest_resource(game, start, resource: Resource):
         except KeyError:
             pass
         for neighbor_coord in neighbor_coords:
-            found = list(filter(lambda i: i.coords == neighbor_coord, known_nodes))
+            found = list(
+                filter(
+                    lambda i: i.coords == neighbor_coord,
+                    known_nodes))
             if len(found) == 0:
                 known_nodes.append(Node(neighbor_coord, cost, this_move))
             elif cost < found[0].cost:

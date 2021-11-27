@@ -43,7 +43,8 @@ class Menu:
         if not self.enabled:
             return
         for k in self.buttons:
-            if self._is_click_on_button(self.buttons[k], pos) and self._can_afford(k):
+            if self._is_click_on_button(
+                    self.buttons[k], pos) and self._can_afford(k):
                 return k
 
     def reset_ui_elements(self):
@@ -54,7 +55,8 @@ class Menu:
     def _is_click_on_button(button, pos):
         button_size = button.surface.get_size()
         return button.coords[0] < pos[0] < button_size[0] + button.coords[0] and \
-            button.coords[1] < pos[1] - (HEIGHT - MENU_HEIGHT) < button_size[1] + button.coords[1]
+            button.coords[1] < pos[1] - \
+            (HEIGHT - MENU_HEIGHT) < button_size[1] + button.coords[1]
 
     def redraw(self):
         pass
@@ -64,14 +66,19 @@ class Menu:
         surface = button.render_button()
         height = surface.get_height()
 
-        surface.set_alpha(MAX_ALPHA if self.enabled and self._can_afford(action) else MAX_ALPHA / 2)
+        surface.set_alpha(
+            MAX_ALPHA if self.enabled and self._can_afford(action) else MAX_ALPHA / 2)
         self.surface.blit(surface,
                           (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y)))
-        button.coords = (PADDING + (x * MENU_COLUMN_WIDTH), PADDING + (height * y))
+        button.coords = (PADDING + (x * MENU_COLUMN_WIDTH),
+                         PADDING + (height * y))
 
     def _can_afford(self, action: Actions):
         try:
-            to_create = next(filter(lambda i: i.action == action, self.all_units))
+            to_create = next(
+                filter(
+                    lambda i: i.action == action,
+                    self.all_units))
             if to_create.costs.food > self.player.food or \
                     to_create.costs.wood > self.player.wood or \
                     to_create.costs.gold > self.player.gold or \
@@ -125,7 +132,8 @@ class Button:
         self.is_button_pressed = False
         rendered = self._render_text()
         self.size = rendered.get_size()
-        self.surface = Surface([self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)])
+        self.surface = Surface(
+            [self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)])
         self.coords = (0, 0)
         self.disabled = False
 
@@ -155,7 +163,8 @@ class ProgressBar:
 
     def draw(self):
         pygame.draw.rect(self.surface, Colors.RED.value, (0, 0, 16, 3))
-        pygame.draw.rect(self.surface, Colors.GREEN.value, (0, 0, floor(16 * self.amount_completed), 3))
+        pygame.draw.rect(self.surface, Colors.GREEN.value,
+                         (0, 0, floor(16 * self.amount_completed), 3))
 
 
 class TopMenu:
@@ -167,6 +176,10 @@ class TopMenu:
 
     def draw(self):
         self.surface.fill(Colors.MENU_BLUE.value)
-        text = self.font.render(f'{self.player.food} food - {self.player.wood} wood - {self.player.gold} gold - {self.player.stone} stone', True, Colors.WHITE.value, Colors.MENU_BLUE.value)
+        text = self.font.render(
+            f'{self.player.food} food - {self.player.wood} wood - {self.player.gold} gold - {self.player.stone} stone',
+            True,
+            Colors.WHITE.value,
+            Colors.MENU_BLUE.value)
         self.surface.blit(text, (1, 1))
         return self.surface

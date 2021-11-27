@@ -75,7 +75,8 @@ class Villager(MobUnit):
 
     def draw(self, sprites: Spritesheet):
         surface = pygame.Surface([TS, TS]).convert_alpha()
-        surface.blit(sprites.mobs[Villager][0 if self.gender == Gender.FEMALE else 1], (0, 0))
+        surface.blit(
+            sprites.mobs[Villager][0 if self.gender == Gender.FEMALE else 1], (0, 0))
         return surface
 
     def get_menu(self):

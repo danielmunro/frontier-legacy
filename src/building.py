@@ -8,7 +8,8 @@ from src.ui import ProgressBar, Menu, TownCenterMenu, EmptyMenu, BarracksMenu
 
 
 class BuildingUnit:
-    def __init__(self, hp, defense, build_time, costs, action, resource_drop_off, size):
+    def __init__(self, hp, defense, build_time, costs,
+                 action, resource_drop_off, size):
         self.hp = hp
         self.defense = defense
         self.build_time = build_time

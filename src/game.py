@@ -53,7 +53,8 @@ class Game:
             width = end[0] - start[0]
             height = end[1] - start[1]
             surface = pygame.Surface([width, height]).convert_alpha()
-            pygame.draw.rect(surface, Colors.WHITE.value, (0, 0, width, height), 1)
+            pygame.draw.rect(surface, Colors.WHITE.value,
+                             (0, 0, width, height), 1)
             self.screen.blit(
                 surface,
                 (start, end)
@@ -102,7 +103,8 @@ class Game:
                 mob.drop_off_building = None
                 mob.move_to = self._nearest_available_neighbor(
                     mob.coords,
-                    find_nearest_resource(self, mob.coords, mob.resource_harvesting),
+                    find_nearest_resource(
+                        self, mob.coords, mob.resource_harvesting),
                 )
                 return
 
@@ -122,14 +124,16 @@ class Game:
                     self.scene.resources[neighbor[1]][neighbor[0]] = 0
                     mob.move_to = self._nearest_available_neighbor(
                         mob.coords,
-                        find_nearest_resource(self, mob.coords, mob.resource_harvesting)
+                        find_nearest_resource(
+                            self, mob.coords, mob.resource_harvesting)
                     )
                 if mob.amount_collected == player.villager_collect_amount:
                     building = next(filter(
                         lambda b: mob.resource_harvesting in b.unit.resource_drop_off,
                         player.buildings
                     ))
-                    mob.move_to = self._nearest_available_neighbor(mob.coords, building.coords)
+                    mob.move_to = self._nearest_available_neighbor(
+                        mob.coords, building.coords)
                     mob.drop_off_building = building
                 return
 
@@ -154,7 +158,8 @@ class Game:
         self.players[0].train_mob(building_class, mob)
 
     def _evaluate_mouse_click(self):
-        _start, _end = get_abs_mouse(self.mouse_down_start, self.mouse_down_end)
+        _start, _end = get_abs_mouse(
+            self.mouse_down_start, self.mouse_down_end)
         start = px_to_tile(_start)
         end = px_to_tile(_end)
         m = self.mouse_down_end
@@ -180,7 +185,8 @@ class Game:
                 selected_mobs = self._get_selected()
                 floor_end = floor_coords(end)
                 for sel in selected_mobs:
-                    nearest = self._nearest_available_neighbor(sel.coords, floor_end)
+                    nearest = self._nearest_available_neighbor(
+                        sel.coords, floor_end)
                     sel.set_move_to(nearest)
                     sel.harvest_coords = end
                     sel.resource_harvesting = self.scene.resource_amounts[floor_end]["resource"]
@@ -202,7 +208,11 @@ class Game:
             mob.selected = False
         for building in player.buildings:
             building_start = building.coords
-            building_end = (building.coords[0] + building.unit.size, building.coords[1] + building.unit.size)
+            building_end = (
+                building.coords[0] +
+                building.unit.size,
+                building.coords[1] +
+                building.unit.size)
             if is_within((start, end), (building_start, building_end)):
                 clicked = building
                 built = building.built
@@ -254,7 +264,8 @@ class Game:
         nearest_neighbor = None
         for neighbor in create_neighbors(to_coords):
             if self.is_passable(neighbor):
-                cost = sqrt(pow(neighbor[0] - from_coords[0], 2) + pow(neighbor[1] - from_coords[1], 2))
+                cost = sqrt(
+                    pow(neighbor[0] - from_coords[0], 2) + pow(neighbor[1] - from_coords[1], 2))
                 if least_cost is None or cost < least_cost:
                     least_cost = cost
                     nearest_neighbor = neighbor
@@ -297,7 +308,8 @@ class Game:
             s = mobs[mob]["mob"].draw(self.sprites)
             self.menu.surface.blit(s, (offset_x * TS, PADDING))
             self.menu.surface.blit(
-                self.number_font.render(str(mobs[mob]["count"]), True, Colors.WHITE.value),
+                self.number_font.render(
+                    str(mobs[mob]["count"]), True, Colors.WHITE.value),
                 ((offset_x * TS) + TS, PADDING + 4),
             )
             offset_x += 2
