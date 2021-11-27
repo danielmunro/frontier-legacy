@@ -8,7 +8,7 @@ from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUI
 from src.coords import is_within, px_to_tile, floor_coords
 from src.mob import Villager, Footman, all_mobs, Mob
 from src.mouse import get_abs_mouse
-from src.pathfind import get_path, create_neighbors
+from src.pathfind import get_path, create_neighbors, find_nearest_resource
 from src.player import Player
 from src.resources import Resource
 from src.scene import Scene
@@ -113,7 +113,10 @@ class Game:
                                 player.stone += mob.amount_collected
                             mob.amount_collected = 0
                             mob.drop_off_building = None
-                            mob.move_to = self._nearest_available_neighbor(mob.coords, floor_coords(mob.harvest_coords))
+                            mob.move_to = self._nearest_available_neighbor(
+                                mob.coords,
+                                find_nearest_resource(self, mob.coords, mob.resource_harvesting),
+                            )
                             break
 
     def _train_mobs(self, ticks):

@@ -1,6 +1,4 @@
-import sys
 import pygame
-from pygame import DOUBLEBUF, HWSURFACE, QUIT
 from pygame.time import Clock
 
 from src.constants import SIZE, FPS_TARGET, Colors

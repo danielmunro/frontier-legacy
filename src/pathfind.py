@@ -1,3 +1,6 @@
+from src.resources import Resource
+from src.scene import Scene
+
 MAX_COST_GUARD = 1000
 
 
@@ -52,3 +55,31 @@ def get_path(game, start, end):
             path.append(this_move.coords)
         this_move = this_move.previous
     return list(reversed(path))
+
+
+def find_nearest_resource(game, start, resource: Resource):
+    cost = 0
+    known_nodes = [Node(start, cost)]
+    done = None
+    while cost < MAX_COST_GUARD and done is None:
+        unvisited = list(filter(lambda i: not i.visited, known_nodes))
+        if len(unvisited) == 0:
+            return []
+        sorted(unvisited, key=lambda i: i.cost)
+        this_move = unvisited[0]
+        this_move.visited = True
+        neighbor_coords = create_neighbors(this_move.coords)
+        try:
+            amounts = game.scene.resource_amounts[this_move.coords]
+            print(amounts)
+            if amounts["resource"] == resource:
+                return this_move.coords
+        except KeyError:
+            pass
+        for neighbor_coord in neighbor_coords:
+            found = list(filter(lambda i: i.coords == neighbor_coord, known_nodes))
+            if len(found) == 0:
+                known_nodes.append(Node(neighbor_coord, cost, this_move))
+            elif cost < found[0].cost:
+                found[0].cost = cost
+        cost += 1
