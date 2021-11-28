@@ -160,6 +160,7 @@ class Game:
         mobs = self.players[0].villager_build(self.action, coords)
         for mob in mobs:
             mob.move_to = self._nearest_available_neighbor(mob.coords, coords)
+            mob.resource_harvesting = None
 
     def _train_mob(self, building_class, mob):
         self.players[0].train_mob(building_class, mob)
