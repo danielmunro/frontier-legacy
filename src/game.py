@@ -6,7 +6,7 @@ import sys
 from src.building import TownCenter, Barracks, all_buildings
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS, SECOND_IN_MS
 from src.coords import is_within, px_to_tile, floor_coords
-from src.mob import Villager, Footman, all_mobs, Mob
+from src.mob import Villager, Footman, all_mobs
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors, find_nearest_resource
 from src.player import Player
@@ -65,24 +65,31 @@ class Game:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_m:
-                    self.action = Actions.MOVE
+                self._handle_key_down(event.key)
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.mouse_down_start = pygame.mouse.get_pos()
-                if self.menu:
-                    self.menu.handle_click_event(self.mouse_down_start)
+                self._handle_mouse_down()
             elif event.type == pygame.MOUSEBUTTONUP:
-                self.mouse_down_end = pygame.mouse.get_pos()
-                if self.menu:
-                    self.menu.reset_ui_elements()
-                self._evaluate_mouse_click()
+                self._handle_mouse_up()
+
+    def _handle_key_down(self, key):
+        if key == pygame.K_m:
+            self.action = Actions.MOVE
+
+    def _handle_mouse_up(self):
+        self.mouse_down_end = pygame.mouse.get_pos()
+        if self.menu:
+            self.menu.reset_ui_elements()
+        self._evaluate_mouse_click()
+
+    def _handle_mouse_down(self):
+        self.mouse_down_start = pygame.mouse.get_pos()
+        if self.menu:
+            self.menu.handle_click_event(self.mouse_down_start)
 
     def _harvest(self, ticks):
         for player in self.players:
             for mob in player.mobs:
-                if mob.unit.__class__ == Villager and mob.harvest_coords is not None and not mob.move_to and \
-                        (mob.last_collection_ticks is None or ticks - mob.last_collection_ticks > SECOND_IN_MS) and \
-                        mob.amount_collected < player.villager_collect_amount:
+                if mob.can_harvest(player.villager_collect_amount, ticks):
                     self._villager_harvest_neighbor(player, mob, ticks)
                 if mob.unit.__class__ == Villager and mob.drop_off_building is not None:
                     self._villager_drop_off(player, mob)
@@ -182,7 +189,7 @@ class Game:
                 return
             elif self.action == Actions.HARVEST:
                 self._start_moving_mobs(end)
-                selected_mobs = self._get_selected()
+                selected_mobs = self.players[0].get_selected()
                 floor_end = floor_coords(end)
                 for sel in selected_mobs:
                     nearest = self._nearest_available_neighbor(
@@ -313,10 +320,3 @@ class Game:
                 ((offset_x * TS) + TS, PADDING + 4),
             )
             offset_x += 2
-
-    def _get_selected(self) -> list[Mob]:
-        mobs = []
-        for mob in self.players[0].mobs:
-            if mob.selected:
-                mobs.append(mob)
-        return mobs

@@ -3,7 +3,7 @@ from math import floor
 
 import pygame
 
-from src.constants import TS, Actions
+from src.constants import TS, Actions, SECOND_IN_MS
 from src.resources import Costs
 from src.sprites import Spritesheet
 from src.ui import VillagerMenu, Menu, MilitaryMenu
@@ -226,7 +226,6 @@ class Mob:
         self.to_build = None
         self.time_built = 0
         self.last_built_ticks = 0
-        # self.return_to_coords = None
         self.harvest_coords = None
         self.resource_harvesting = None
         self.amount_collected = 0
@@ -258,6 +257,11 @@ class Mob:
 
     def set_move_to(self, coords):
         self.move_to = (floor(coords[0]), floor(coords[1]))
+
+    def can_harvest(self, collect_amount, ticks):
+        return self.unit.__class__ == Villager and self.harvest_coords is not None and not self.move_to and \
+               (self.last_collection_ticks is None or ticks - self.last_collection_ticks > SECOND_IN_MS) and \
+               self.amount_collected < collect_amount
 
 
 all_mobs = [
