@@ -263,7 +263,7 @@ class Game:
                     mob.move(ticks, move_to)
                 elif mob.coords in stationed:
                     self._move_mob_disperse(mob, stationed, ticks)
-                else:
+                elif mob.resource_harvesting is None:
                     stationed[mob.coords] = 1
 
     def _nearest_available_neighbor(self, from_coords, to_coords):
