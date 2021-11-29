@@ -192,7 +192,7 @@ class Player:
                     Mob(mob, (building.coords[0], building.coords[1] + building.unit.size)))
                 return
 
-    def get_selected(self) -> list[Mob]:
+    def get_selected_mobs(self) -> list[Mob]:
         mobs = []
         for mob in self.mobs:
             if mob.selected:

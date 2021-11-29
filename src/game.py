@@ -210,7 +210,7 @@ class Game:
             return True
         elif self.action == Actions.HARVEST:
             self._start_moving_mobs(end)
-            selected_mobs = self.players[0].get_selected()
+            selected_mobs = self.players[0].get_selected_mobs()
             floor_end = floor_coords(end)
             for sel in selected_mobs:
                 nearest = self._nearest_available_neighbor(
