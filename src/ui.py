@@ -5,23 +5,25 @@ from pygame import Surface
 import sys
 
 from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, MAX_ALPHA, WIDTH, TS
+from src.sprites import Spritesheet
 
 
 def create_buttons():
+    sprites = Spritesheet()
     return {
-        Actions.MOVE: Button("Move"),
-        Actions.ATTACK_MOVE: Button("Attack Move"),
-        Actions.ATTACK: Button("Attack"),
-        Actions.HARVEST: Button("Harvest"),
-        Actions.BUILD: Button("Build"),
-        Actions.REPAIR: Button("Repair"),
-        Actions.GARRISON: Button("Garrison"),
-        Actions.BUILD_HOUSE: Button("House"),
-        Actions.BUILD_LUMBER_MILL: Button("Lumber Mill"),
-        Actions.BUILD_MILL: Button("Mill"),
-        Actions.BUILD_BARRACKS: Button("Barracks"),
-        Actions.TRAIN_VILLAGER: Button("Villager"),
-        Actions.TRAIN_FOOTMAN: Button("Footman"),
+        Actions.MOVE: TextButton("Move"),
+        Actions.ATTACK_MOVE: TextButton("Attack Move"),
+        Actions.ATTACK: TextButton("Attack"),
+        Actions.HARVEST: TextButton("Harvest"),
+        Actions.BUILD: TextButton("Build"),
+        Actions.REPAIR: TextButton("Repair"),
+        Actions.GARRISON: TextButton("Garrison"),
+        Actions.BUILD_HOUSE: ImageButton(sprites.create(0, 1)),
+        Actions.BUILD_LUMBER_MILL: ImageButton(sprites.create(2, 5)),
+        Actions.BUILD_MILL: ImageButton(sprites.create(3, 23)),
+        Actions.BUILD_BARRACKS: ImageButton(sprites.create(6, 4)),
+        Actions.TRAIN_VILLAGER: ImageButton(sprites.create(5, 13)),
+        Actions.TRAIN_FOOTMAN: ImageButton(sprites.create(6, 15)),
     }
 
 
@@ -126,7 +128,29 @@ class EmptyMenu(Menu):
         pass
 
 
-class Button:
+class ImageButton:
+    def __init__(self, image):
+        self.image = image
+        self.is_button_pressed = False
+        self.size = self.image.get_size()
+        self.surface = Surface(
+            [self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)])
+        self.coords = (0, 0)
+        self.disabled = False
+
+    def render_button(self):
+        self.surface.fill(Colors.RED.value if self.is_button_pressed else Colors.BLACK.value)
+        self.surface.blit(self.image, (PADDING, PADDING))
+        pygame.draw.rect(
+            self.surface,
+            Colors.WHITE.value,
+            (0, 0, self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)),
+            1,
+        )
+        return self.surface
+
+
+class TextButton:
     def __init__(self, label):
         self.font = self.button_font = pygame.font.Font('freesansbold.ttf', 24)
         self.label = label
