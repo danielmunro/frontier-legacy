@@ -4,6 +4,7 @@ import pygame
 
 from src.building import Building, TownCenter, create_building_from_action
 from src.constants import Colors, HEIGHT, WIDTH, TS, MAX_ALPHA
+from src.coords import is_within
 from src.mob import Mob, Villager
 from src.pathfind import create_neighbors
 
@@ -41,6 +42,33 @@ class Player:
         self.gold = 100
         self.stone = 0
         self.villager_collect_amount = 10
+
+    def deselect_all(self):
+        for building in self.buildings:
+            building.selected = False
+        for mob in self.mobs:
+            mob.selected = False
+
+    def select_from_box(self, start, end):
+        clicked = None
+        enabled = True
+        for building in self.buildings:
+            building_start = building.coords
+            building_end = (
+                building.coords[0] +
+                building.unit.size,
+                building.coords[1] +
+                building.unit.size)
+            if is_within((start, end), (building_start, building_end)):
+                clicked = building
+                enabled = building.built
+                building.selected = True
+        for mob in self.mobs:
+            if floor(start[0]) <= mob.coords[0] <= floor(end[0]) and \
+                    floor(start[1]) <= mob.coords[1] <= floor(end[1]):
+                clicked = mob
+                mob.selected = True
+        return clicked, enabled
 
     def draw(self):
         scene = pygame.Surface([WIDTH, HEIGHT]).convert_alpha()

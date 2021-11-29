@@ -170,69 +170,22 @@ class Game:
             self.mouse_down_start, self.mouse_down_end)
         start = px_to_tile(_start)
         end = px_to_tile(_end)
-        m = self.mouse_down_end
 
-        if self.menu and m[1] > HEIGHT - MENU_HEIGHT:
-            self.mouse_down_start = None
-            self.mouse_down_end = None
-            self.action = self.menu.map_click_to_action(m)
-            if self.action == Actions.TRAIN_VILLAGER:
-                self._train_mob(TownCenter, Villager())
-            elif self.action == Actions.TRAIN_FOOTMAN:
-                self._train_mob(Barracks, Footman())
+        if self.menu and self.mouse_down_end[1] > HEIGHT - MENU_HEIGHT:
+            self._evaluate_menu_click()
             return
 
-        if self.action is not None:
-            if self.action == Actions.MOVE:
-                self._start_moving_mobs(end)
-                self.action = None
-                self.mouse_down_start = None
-                return
-            elif self.action == Actions.HARVEST:
-                self._start_moving_mobs(end)
-                selected_mobs = self.players[0].get_selected()
-                floor_end = floor_coords(end)
-                for sel in selected_mobs:
-                    nearest = self._nearest_available_neighbor(
-                        sel.coords, floor_end)
-                    sel.set_move_to(nearest)
-                    sel.harvest_coords = end
-                    sel.resource_harvesting = self.scene.resource_amounts[floor_end]["resource"]
-                self.action = None
-                self.mouse_down_start = None
-                return
-            elif self.action in BUILD_ACTIONS:
-                self._villager_build(end)
-                self.action = None
-                self.mouse_down_start = None
-                return
+        if self.action is not None and self._evaluate_action(end):
+            self.action = None
+            self.mouse_down_start = None
+            return
 
         player = self.players[0]
-        clicked = None
-        built = True
-        for building in player.buildings:
-            building.selected = False
-        for mob in player.mobs:
-            mob.selected = False
-        for building in player.buildings:
-            building_start = building.coords
-            building_end = (
-                building.coords[0] +
-                building.unit.size,
-                building.coords[1] +
-                building.unit.size)
-            if is_within((start, end), (building_start, building_end)):
-                clicked = building
-                built = building.built
-                building.selected = True
-        for mob in player.mobs:
-            if floor(start[0]) <= mob.coords[0] <= floor(end[0]) and \
-                    floor(start[1]) <= mob.coords[1] <= floor(end[1]):
-                clicked = mob
-                mob.selected = True
+        player.deselect_all()
+        clicked, enabled = player.select_from_box(start, end)
         if clicked:
             self.menu = clicked.unit.get_menu()
-            self.menu.enabled = built
+            self.menu.enabled = enabled
             self.menu.player = player
             self.menu.all_units = self.all_units
             clicked.menu = self.menu
@@ -240,6 +193,35 @@ class Game:
             self.menu = None
         self.mouse_down_start = None
         self.mouse_down_end = None
+
+    def _evaluate_menu_click(self):
+        self.mouse_down_start = None
+        m = self.mouse_down_end
+        self.mouse_down_end = None
+        self.action = self.menu.map_click_to_action(m)
+        if self.action == Actions.TRAIN_VILLAGER:
+            self._train_mob(TownCenter, Villager())
+        elif self.action == Actions.TRAIN_FOOTMAN:
+            self._train_mob(Barracks, Footman())
+
+    def _evaluate_action(self, end):
+        if self.action == Actions.MOVE:
+            self._start_moving_mobs(end)
+            return True
+        elif self.action == Actions.HARVEST:
+            self._start_moving_mobs(end)
+            selected_mobs = self.players[0].get_selected()
+            floor_end = floor_coords(end)
+            for sel in selected_mobs:
+                nearest = self._nearest_available_neighbor(
+                    sel.coords, floor_end)
+                sel.set_move_to(nearest)
+                sel.harvest_coords = end
+                sel.resource_harvesting = self.scene.resource_amounts[floor_end]["resource"]
+            return True
+        elif self.action in BUILD_ACTIONS:
+            self._villager_build(end)
+            return True
 
     def _draw_scene(self):
         self.screen.blit(self.scene.draw(), (0, 0))
