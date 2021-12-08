@@ -4,7 +4,8 @@ import pygame
 import sys
 
 from src.building import TownCenter, Barracks, all_buildings
-from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS, SECOND_IN_MS
+from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS, SECOND_IN_MS, \
+    MENU_COLUMN_WIDTH
 from src.coords import is_within, px_to_tile, floor_coords
 from src.mob import Villager, Footman, all_mobs
 from src.mouse import get_abs_mouse
@@ -283,6 +284,12 @@ class Game:
         coords = self.screen.get_size()
         self.menu.surface.fill(Colors.MENU_BLUE.value)
         self.menu.redraw()
+        mx, my = pygame.mouse.get_pos()
+        for action, b in self.menu.drawn_buttons.items():
+            bx, by = b.coords
+            ymod = HEIGHT - MENU_HEIGHT
+            if bx < mx < bx + b.width and by < my - ymod < by + b.height and b.helper_text:
+                self.screen.blit(self.menu.draw_helper_text(b.action), (0, ymod - 40))
         self._draw_selected()
         self.screen.blit(self.menu.surface, (0, coords[1] - MENU_HEIGHT))
 

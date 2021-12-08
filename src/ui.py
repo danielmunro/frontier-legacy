@@ -18,39 +18,41 @@ def create_buttons():
         Actions.BUILD: TextButton("Build"),
         Actions.REPAIR: TextButton("Repair"),
         Actions.GARRISON: TextButton("Garrison"),
-        Actions.BUILD_HOUSE: ImageButton(sprites.create(0, 1)),
-        Actions.BUILD_LUMBER_MILL: ImageButton(sprites.create(2, 5)),
-        Actions.BUILD_MILL: ImageButton(sprites.create(3, 23)),
-        Actions.BUILD_BARRACKS: ImageButton(sprites.create(6, 4)),
-        Actions.TRAIN_VILLAGER: ImageButton(sprites.create(5, 13)),
-        Actions.TRAIN_FOOTMAN: ImageButton(sprites.create(6, 15)),
+        Actions.BUILD_HOUSE: ImageButton(sprites.create(0, 1), "Build House"),
+        Actions.BUILD_LUMBER_MILL: ImageButton(sprites.create(2, 5), "Build Lumber Mill"),
+        Actions.BUILD_MILL: ImageButton(sprites.create(3, 23), "Build Mill"),
+        Actions.BUILD_BARRACKS: ImageButton(sprites.create(6, 4), "Build Barracks"),
+        Actions.TRAIN_VILLAGER: ImageButton(sprites.create(5, 13), "Train Villager"),
+        Actions.TRAIN_FOOTMAN: ImageButton(sprites.create(6, 15), "Train Footman"),
     }
 
 
 class Menu:
     def __init__(self):
-        self.buttons = create_buttons()
+        self.font = self.button_font = pygame.font.Font('freesansbold.ttf', 24)
+        self.all_buttons = create_buttons()
         coords = pygame.display.get_window_size()
         self.surface = Surface([coords[0], MENU_HEIGHT])
         self.player = None
         self.all_units = []
         self.enabled = True
+        self.drawn_buttons = {}
 
     def handle_click_event(self, pos):
-        for b in self.buttons.values():
+        for b in self.all_buttons.values():
             if self._is_click_on_button(b, pos):
                 b.is_button_pressed = True
 
     def map_click_to_action(self, pos):
         if not self.enabled:
             return
-        for k in self.buttons:
+        for k in self.all_buttons:
             if self._is_click_on_button(
-                    self.buttons[k], pos) and self._can_afford(k):
+                    self.all_buttons[k], pos) and self._can_afford(k):
                 return k
 
     def reset_ui_elements(self):
-        for b in self.buttons.values():
+        for b in self.all_buttons.values():
             b.is_button_pressed = False
 
     @staticmethod
@@ -64,17 +66,36 @@ class Menu:
         pass
 
     def draw_button(self, action: Actions, x, y):
-        button = self.buttons[action]
+        button = self.all_buttons[action]
         surface = button.render_button()
         height = surface.get_height()
+        width = surface.get_width()
 
         surface.set_alpha(
             MAX_ALPHA if self.enabled and self._can_afford(action) else MAX_ALPHA / 2)
-        self.surface.blit(surface,
-                          (PADDING + (x * MENU_COLUMN_WIDTH),
-                           PADDING + (height * y)))
-        button.coords = (PADDING + (x * MENU_COLUMN_WIDTH),
-                         PADDING + (height * y))
+        dx = (PADDING + (x * MENU_COLUMN_WIDTH))
+        dy = PADDING + (height * y)
+        self.surface.blit(surface, (dx, dy))
+        button.coords = dx, dy
+        button.width = width
+        button.height = height
+        button.action = action
+        self.drawn_buttons[action] = button
+
+    def draw_helper_text(self, action: Actions):
+        rendered = self._render_helper_text(action)
+        size = rendered.get_size()
+        surface = Surface([size[0] + (PADDING * 2), size[1] + (PADDING * 2)])
+        surface.blit(rendered, (0, 0))
+        return surface
+
+    def _render_helper_text(self, action: Actions):
+        return self.font.render(
+            self.all_buttons[action].helper_text,
+            True,
+            Colors.WHITE.value,
+            Colors.BLACK.value,
+        )
 
     def _can_afford(self, action: Actions):
         try:
@@ -129,7 +150,7 @@ class EmptyMenu(Menu):
 
 
 class ImageButton:
-    def __init__(self, image):
+    def __init__(self, image, helper_text=""):
         self.image = image
         self.is_button_pressed = False
         self.size = self.image.get_size()
@@ -137,6 +158,9 @@ class ImageButton:
             [self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)])
         self.coords = (0, 0)
         self.disabled = False
+        self.helper_text = helper_text
+        self.width = 0
+        self.height = 0
 
     def render_button(self):
         self.surface.fill(Colors.RED.value if self.is_button_pressed else Colors.BLACK.value)
@@ -151,16 +175,17 @@ class ImageButton:
 
 
 class TextButton:
-    def __init__(self, label):
-        self.font = self.button_font = pygame.font.Font('freesansbold.ttf', 24)
+    def __init__(self, label, helper_text=""):
         self.label = label
         self.is_button_pressed = False
+        self.font = self.button_font = pygame.font.Font('freesansbold.ttf', 24)
         rendered = self._render_text()
         self.size = rendered.get_size()
         self.surface = Surface(
             [self.size[0] + (PADDING * 2), self.size[1] + (PADDING * 2)])
         self.coords = (0, 0)
         self.disabled = False
+        self.helper_text = helper_text
 
     def render_button(self):
         self.surface.fill(Colors.BLACK.value)
