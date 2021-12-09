@@ -2,7 +2,6 @@ from math import floor
 
 import pygame.display
 from pygame import Surface
-import sys
 
 from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, MAX_ALPHA, WIDTH, TS
 from src.sprites import Spritesheet
@@ -21,6 +20,7 @@ def create_buttons():
         Actions.BUILD_HOUSE: ImageButton(sprites.create(0, 1), "Build House"),
         Actions.BUILD_LUMBER_MILL: ImageButton(sprites.create(2, 5), "Build Lumber Mill"),
         Actions.BUILD_MILL: ImageButton(sprites.create(3, 23), "Build Mill"),
+        Actions.BUILD_QUARRY: ImageButton(sprites.create(0, 5), "Build Quarry"),
         Actions.BUILD_BARRACKS: ImageButton(sprites.create(6, 4), "Build Barracks"),
         Actions.TRAIN_VILLAGER: ImageButton(sprites.create(5, 13), "Train Villager"),
         Actions.TRAIN_FOOTMAN: ImageButton(sprites.create(6, 15), "Train Footman"),
@@ -117,8 +117,9 @@ class VillagerMenu(Menu):
     def redraw(self):
         self.draw_button(Actions.BUILD_HOUSE, 2, 0)
         self.draw_button(Actions.BUILD_LUMBER_MILL, 2, 1)
-        self.draw_button(Actions.BUILD_MILL, 2, 2)
-        self.draw_button(Actions.BUILD_BARRACKS, 2, 3)
+        self.draw_button(Actions.BUILD_QUARRY, 2, 2)
+        self.draw_button(Actions.BUILD_MILL, 2, 3)
+        self.draw_button(Actions.BUILD_BARRACKS, 2, 4)
 
         self.draw_button(Actions.MOVE, 3, 0)
         self.draw_button(Actions.HARVEST, 3, 1)

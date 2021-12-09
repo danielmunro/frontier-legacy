@@ -129,6 +129,30 @@ class LumberMill(BuildingUnit):
         return EmptyMenu()
 
 
+class Quarry(BuildingUnit):
+    def __init__(self):
+        super().__init__(
+            1600,
+            0,
+            30,
+            Costs(0, 100, 0, 0),
+            Actions.BUILD_QUARRY,
+            [Resource.GOLD, Resource.STONE],
+            1,
+        )
+
+    def trains(self) -> list[MobUnit]:
+        return []
+
+    def draw(self, sprites: Spritesheet):
+        surface = pygame.Surface([TS, TS]).convert_alpha()
+        surface.blit(sprites.buildings[Quarry][0], (0, 0))
+        return surface
+
+    def get_menu(self) -> Menu:
+        return EmptyMenu()
+
+
 class Mill(BuildingUnit):
     def __init__(self):
         super().__init__(
@@ -176,6 +200,8 @@ def create_building_from_action(action):
         return LumberMill()
     elif action == Actions.BUILD_MILL:
         return Mill()
+    elif action == Actions.BUILD_QUARRY:
+        return Quarry()
 
 
 all_buildings = [
@@ -184,4 +210,5 @@ all_buildings = [
     Barracks(),
     LumberMill(),
     Mill(),
+    Quarry(),
 ]
