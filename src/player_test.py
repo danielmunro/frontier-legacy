@@ -1,6 +1,6 @@
 import unittest
 
-from src.building import TownCenter, House
+from src.all_buildings import TownCenter, House
 from src.constants import Actions
 from src.mob import Villager
 from src.test_helper import create_player

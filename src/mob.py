@@ -1,12 +1,9 @@
 from enum import Enum
 from math import floor
 
-import pygame
-
-from src.constants import TS, Actions, SECOND_IN_MS
-from src.resources import Costs
+from src.constants import SECOND_IN_MS
 from src.sprites import Spritesheet
-from src.ui import VillagerMenu, Menu, MilitaryMenu
+from src.ui import Menu
 
 
 class AttackType(Enum):
@@ -34,6 +31,7 @@ class MobUnit:
             build_time,
             costs,
             action,
+            can_harvest,
     ):
         self.hp = hp
         self.attack = attack
@@ -47,171 +45,13 @@ class MobUnit:
         self.build_time = build_time
         self.costs = costs
         self.action = action
+        self.can_harvest = can_harvest
 
     def draw(self, sprites: Spritesheet):
         pass
 
     def get_menu(self) -> Menu:
         pass
-
-
-class Villager(MobUnit):
-    def __init__(self):
-        self.gender = Gender.FEMALE
-        super().__init__(
-            20,
-            1,
-            1,
-            AttackType.MELEE,
-            1,
-            1,
-            0,
-            0,
-            800,
-            30,
-            Costs(25, 0, 0, 0),
-            Actions.TRAIN_VILLAGER,
-        )
-
-    def draw(self, sprites: Spritesheet):
-        surface = pygame.Surface([TS, TS]).convert_alpha()
-        surface.blit(
-            sprites.mobs[Villager][0 if self.gender == Gender.FEMALE else 1], (0, 0))
-        return surface
-
-    def get_menu(self):
-        return VillagerMenu()
-
-
-class Ruffian(MobUnit):
-    def __init__(self):
-        super().__init__(
-            28,
-            2,
-            1,
-            AttackType.MELEE,
-            1,
-            1,
-            0,
-            0,
-            1,
-            45,
-            Costs(60, 0, 10, 0),
-            Actions.TRAIN_RUFFIAN
-        )
-
-    def get_menu(self):
-        return MilitaryMenu()
-
-
-class Footman(MobUnit):
-    def __init__(self):
-        super().__init__(
-            35,
-            4,
-            1,
-            AttackType.MELEE,
-            1,
-            1,
-            1,
-            1,
-            800,
-            30,
-            Costs(75, 0, 20, 0),
-            Actions.TRAIN_FOOTMAN,
-        )
-
-    def draw(self, sprites: Spritesheet):
-        surface = pygame.Surface([TS, TS]).convert_alpha()
-        surface.blit(sprites.mobs[Footman][0], (0, 0))
-        return surface
-
-    def get_menu(self):
-        return MilitaryMenu()
-
-
-class Swordsman(MobUnit):
-    def __init__(self):
-        super().__init__(
-            40,
-            6,
-            1,
-            AttackType.MELEE,
-            1,
-            2,
-            1,
-            1,
-            1,
-            60,
-            Costs(100, 0, 25, 0),
-            Actions.TRAIN_SWORDSMAN,
-        )
-
-    def get_menu(self):
-        return MilitaryMenu()
-
-
-class Rifleman(MobUnit):
-    def __init__(self):
-        super().__init__(
-            35,
-            8,
-            6,
-            AttackType.RANGED,
-            0.70,
-            1,
-            0,
-            0,
-            1,
-            60,
-            Costs(100, 25, 25, 0),
-            Actions.TRAIN_RIFLEMAN,
-        )
-
-    def get_menu(self):
-        return MilitaryMenu()
-
-
-class Archer(MobUnit):
-    def __init__(self):
-        super().__init__(
-            30,
-            5,
-            6,
-            AttackType.RANGED,
-            0.85,
-            1,
-            0,
-            0,
-            1,
-            55,
-            Costs(50, 40, 20, 0),
-            Actions.TRAIN_ARCHER,
-        )
-
-    def get_menu(self):
-        return MilitaryMenu()
-
-
-class Crossbowman(MobUnit):
-    def __init__(self):
-        super().__init__(
-            35,
-            6,
-            6,
-            AttackType.RANGED,
-            0.75,
-            1,
-            0,
-            0,
-            1,
-            60,
-            Costs(65, 50, 25, 0),
-            Actions.TRAIN_CROSSBOWMAN,
-        )
-
-    def get_menu(self):
-        return MilitaryMenu()
 
 
 class Mob:
@@ -259,17 +99,6 @@ class Mob:
         self.move_to = (floor(coords[0]), floor(coords[1]))
 
     def can_harvest(self, collect_amount, ticks):
-        return self.unit.__class__ == Villager and self.harvest_coords is not None and not self.move_to and \
+        return self.unit.can_harvest and self.harvest_coords is not None and not self.move_to and \
                (self.last_collection_ticks is None or ticks - self.last_collection_ticks > SECOND_IN_MS) and \
                self.amount_collected < collect_amount
-
-
-all_mobs = [
-    Villager(),
-    Ruffian(),
-    Footman(),
-    Swordsman(),
-    Archer(),
-    Crossbowman(),
-    Rifleman(),
-]

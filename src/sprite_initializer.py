@@ -1,8 +1,7 @@
-from src.building import TownCenter, House, Barracks, LumberMill, Mill, Quarry
-from src.mob import Villager, Footman
+from src.all_buildings import TownCenter, House, Barracks, LumberMill, Mill, Quarry
+from src.all_mobs import Footman, Villager
 from src.resources import Resource
 from src.sprites import Spritesheet
-import sys
 
 
 def initialize_sprites(sprites: Spritesheet):

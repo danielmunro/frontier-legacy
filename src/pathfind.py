@@ -1,5 +1,4 @@
 from src.resources import Resource
-from src.scene import Scene
 
 MAX_COST_GUARD = 1000
 

@@ -2,10 +2,12 @@ from math import floor
 
 import pygame
 
-from src.building import Building, TownCenter, create_building_from_action
+from src.all_buildings import TownCenter, create_building_from_action
+from src.all_mobs import Villager
+from src.building import Building
 from src.constants import Colors, HEIGHT, WIDTH, TS, MAX_ALPHA
 from src.coords import is_within
-from src.mob import Mob, Villager
+from src.mob import Mob
 from src.pathfind import create_neighbors
 
 

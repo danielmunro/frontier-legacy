@@ -1,13 +1,12 @@
-from math import floor, sqrt
+from math import sqrt
 
 import pygame
 import sys
 
-from src.building import TownCenter, Barracks, all_buildings
-from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS, SECOND_IN_MS, \
-    MENU_COLUMN_WIDTH
-from src.coords import is_within, px_to_tile, floor_coords
-from src.mob import Villager, Footman, all_mobs
+from src.all_buildings import all_buildings, TownCenter, Barracks
+from src.all_mobs import all_mobs, Footman, Villager
+from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
+from src.coords import px_to_tile, floor_coords
 from src.mouse import get_abs_mouse
 from src.pathfind import get_path, create_neighbors, find_nearest_resource
 from src.player import Player
@@ -92,7 +91,7 @@ class Game:
             for mob in player.mobs:
                 if mob.can_harvest(player.villager_collect_amount, ticks):
                     self._villager_harvest_neighbor(player, mob, ticks)
-                if mob.unit.__class__ == Villager and mob.drop_off_building is not None:
+                if mob.unit.can_harvest and mob.drop_off_building is not None:
                     self._villager_drop_off(player, mob)
 
     def _villager_drop_off(self, player, mob):
