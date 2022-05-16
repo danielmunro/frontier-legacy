@@ -9,6 +9,7 @@ from src.constants import Colors, HEIGHT, WIDTH, TS, MAX_ALPHA
 from src.coords import is_within
 from src.mob import Mob
 from src.pathfind import create_neighbors
+from src.resources import Costs
 
 
 def get_start_buildings(coords):
@@ -171,10 +172,7 @@ class Player:
 
     def villager_build(self, action, coords) -> list[Mob]:
         building_unit = create_building_from_action(action)
-        self.food -= building_unit.costs.food
-        self.wood -= building_unit.costs.wood
-        self.gold -= building_unit.costs.gold
-        self.stone -= building_unit.costs.stone
+        self._deduct_costs(building_unit.costs)
         self.buildings.append(Building(building_unit, coords))
         mobs = []
         for mob in self.mobs:
@@ -184,10 +182,7 @@ class Player:
         return mobs
 
     def train_mob(self, building_class, mob):
-        self.food -= mob.costs.food
-        self.wood -= mob.costs.wood
-        self.gold -= mob.costs.gold
-        self.stone -= mob.costs.stone
+        self._deduct_costs(mob.costs)
         for building in self.buildings:
             if building.selected and building.unit.__class__ == building_class:
                 building.queue.append(
@@ -200,3 +195,9 @@ class Player:
             if mob.selected:
                 mobs.append(mob)
         return mobs
+
+    def _deduct_costs(self, costs: Costs):
+        self.food -= costs.food
+        self.wood -= costs.wood
+        self.gold -= costs.gold
+        self.stone -= costs.stone

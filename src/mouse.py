@@ -1,6 +1,3 @@
-from src.constants import TS
-
-
 def get_abs_mouse(mouse_down, mouse_up):
     width = abs(mouse_up[0] - mouse_down[0])
     height = abs(mouse_up[1] - mouse_down[1])

@@ -3,6 +3,7 @@ from math import floor
 import pygame.display
 from pygame import Surface
 
+from src.all_units import all_units
 from src.constants import Colors, MENU_HEIGHT, HEIGHT, PADDING, Actions, MENU_COLUMN_WIDTH, MAX_ALPHA, WIDTH, TS
 from src.sprites import Spritesheet
 
@@ -34,7 +35,6 @@ class Menu:
         coords = pygame.display.get_window_size()
         self.surface = Surface([coords[0], MENU_HEIGHT])
         self.player = None
-        self.all_units = []
         self.enabled = True
         self.drawn_buttons = {}
 
@@ -59,8 +59,7 @@ class Menu:
     def _is_click_on_button(button, pos):
         button_size = button.surface.get_size()
         return button.coords[0] < pos[0] < button_size[0] + button.coords[0] and \
-            button.coords[1] < pos[1] - \
-            (HEIGHT - MENU_HEIGHT) < button_size[1] + button.coords[1]
+               button.coords[1] < pos[1] - (HEIGHT - MENU_HEIGHT) < button_size[1] + button.coords[1]
 
     def redraw(self):
         pass
@@ -98,19 +97,14 @@ class Menu:
         )
 
     def _can_afford(self, action: Actions):
-        try:
-            to_create = next(
-                filter(
-                    lambda i: i.action == action,
-                    self.all_units))
-            if to_create.costs.food > self.player.food or \
-                    to_create.costs.wood > self.player.wood or \
-                    to_create.costs.gold > self.player.gold or \
-                    to_create.costs.stone > self.player.stone:
-                return False
-        except StopIteration:
-            pass
-        return True
+        for u in all_units:
+            if u.action == action and \
+                    u.costs.food <= self.player.food and \
+                    u.costs.wood <= self.player.wood and \
+                    u.costs.stone <= self.player.stone and \
+                    u.costs.gold <= self.player.gold:
+                return True
+        return False
 
 
 class VillagerMenu(Menu):

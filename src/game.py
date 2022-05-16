@@ -3,8 +3,8 @@ from math import sqrt
 import pygame
 import sys
 
-from src.all_buildings import all_buildings, TownCenter, Barracks
-from src.all_mobs import all_mobs, Footman, Villager
+from src.all_buildings import TownCenter, Barracks
+from src.all_mobs import Footman, Villager
 from src.constants import TS, MENU_HEIGHT, Colors, Actions, HEIGHT, PADDING, BUILD_ACTIONS
 from src.coords import px_to_tile, floor_coords
 from src.mouse import get_abs_mouse
@@ -21,7 +21,6 @@ class Game:
     is_playing = True
     action = None
     menu = None
-    all_units = all_mobs + all_buildings
 
     def __init__(self, screen, scene: Scene, players: list[Player], sprites):
         self.screen = screen
@@ -187,7 +186,6 @@ class Game:
             self.menu = clicked.unit.get_menu()
             self.menu.enabled = enabled
             self.menu.player = player
-            self.menu.all_units = self.all_units
             clicked.menu = self.menu
         else:
             self.menu = None
