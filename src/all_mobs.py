@@ -1,8 +1,6 @@
-from math import floor
-
 import pygame
 
-from src.constants import SECOND_IN_MS, Actions, TS
+from src.constants import Actions, TS
 from src.mob import MobUnit, AttackType, Gender
 from src.resources import Costs
 from src.sprites import Spritesheet
