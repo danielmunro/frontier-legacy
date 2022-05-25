@@ -77,7 +77,10 @@ class Menu:
     def _can_afford(self, action: Actions):
         for u in Menu.all_units:
             if u.action == action and \
-                    (u.costs.food > self.player.food or u.costs.wood > self.player.wood or u.costs.stone > self.player.stone or u.costs.gold > self.player.gold):
+                    (u.costs.food > self.player.food or
+                     u.costs.wood > self.player.wood or
+                     u.costs.stone > self.player.stone or
+                     u.costs.gold > self.player.gold):
                 return False
         return True
 
