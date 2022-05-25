@@ -6,7 +6,7 @@ from src.constants import Actions, TS
 from src.mob import MobUnit
 from src.resources import Resource, Costs
 from src.sprites import Spritesheet
-from src.ui import EmptyMenu, Menu, BarracksMenu, TownCenterMenu
+from src.menu import EmptyMenu, Menu, BarracksMenu, TownCenterMenu
 
 
 class TownCenter(BuildingUnit):

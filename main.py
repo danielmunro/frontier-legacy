@@ -1,12 +1,15 @@
 import pygame
 from pygame.time import Clock
 
+from src.all_units import all_units
 from src.constants import SIZE, FPS_TARGET, Colors
 from src.game import Game
+from src.menu import Menu
 from src.player import get_start_buildings, get_start_mobs, Player
 from src.scene import create_plains, Scene, create_resources
 from src.sprite_initializer import initialize_sprites
 from src.sprites import Spritesheet
+from src.ui import create_buttons
 
 pygame.init()
 pygame.display.set_caption('Frontier Legacy')
@@ -19,6 +22,8 @@ pygame.display.flip()
 player1_start = 10, 10
 player2_start = 50, 40
 sprites = Spritesheet()
+Menu.all_units = all_units
+Menu.all_buttons = create_buttons()
 game = Game(
     screen,
     Scene(

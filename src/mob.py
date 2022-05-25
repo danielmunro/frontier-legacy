@@ -3,7 +3,7 @@ from math import floor
 
 from src.constants import SECOND_IN_MS
 from src.sprites import Spritesheet
-from src.ui import Menu
+from src.menu import Menu
 
 
 class AttackType(Enum):

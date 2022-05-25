@@ -6,6 +6,24 @@ from src.constants import SCENE_SIZE, TS, HEIGHT, WIDTH
 from src.resources import Resource
 
 
+FOOD_AMOUNT_PER_UNIT = 150
+WOOD_AMOUNT_PER_UNIT = 200
+GOLD_AMOUNT_PER_UNIT = 600
+STONE_AMOUNT_PER_UNIT = 400
+
+
+def get_amount_of_resource_per_instance(resource: Resource) -> int:
+    if resource == Resource.FOOD:
+        return FOOD_AMOUNT_PER_UNIT
+    elif resource == Resource.WOOD:
+        return WOOD_AMOUNT_PER_UNIT
+    elif resource == Resource.GOLD:
+        return GOLD_AMOUNT_PER_UNIT
+    elif resource == Resource.STONE:
+        return STONE_AMOUNT_PER_UNIT
+    return 0
+
+
 class Scene:
     def __init__(self, background, blocking, resources, sprites):
         self.background = background
@@ -13,23 +31,32 @@ class Scene:
         self.resources = resources
         self.sprites = sprites
         self.resource_amounts = {}
+        self._initialize_resources()
+
+    def _initialize_resources(self):
         for y in range(len(self.resources)):
             for x in range(len(self.resources[y])):
                 r = self.resources[y][x]
                 if r:
-                    amount = 0
-                    if r == Resource.FOOD:
-                        amount = 150
-                    elif r == Resource.WOOD:
-                        amount = 200
-                    elif r == Resource.GOLD:
-                        amount = 600
-                    elif r == Resource.STONE:
-                        amount = 400
                     self.resource_amounts[(x, y)] = {
                         "resource": r,
-                        "amount": amount,
+                        "amount": get_amount_of_resource_per_instance(r),
                     }
+
+    def _draw_resources(self, surface: Surface):
+        for y in range(len(self.resources)):
+            for x in range(len(self.resources[y])):
+                resource = self.resources[y][x]
+                if resource != 0:
+                    surface.blit(
+                        self.sprites.resources[resource], (x * TS, y * TS))
+
+    def _draw_terrain(self, surface: Surface):
+        for y in range(len(self.background)):
+            for x in range(len(self.background[y])):
+                index = self.background[y][x]
+                surface.blit(self.sprites.terrain[index][(
+                    x + y) % 2 == 0], (x * TS, y * TS))
 
     def is_passable(self, coords):
         x = coords[0]
@@ -39,17 +66,8 @@ class Scene:
 
     def draw(self):
         surface = Surface([WIDTH, HEIGHT]).convert_alpha()
-        for y in range(len(self.background)):
-            for x in range(len(self.background[y])):
-                index = self.background[y][x]
-                surface.blit(self.sprites.terrain[index][(
-                    x + y) % 2 == 0], (x * TS, y * TS))
-        for y in range(len(self.resources)):
-            for x in range(len(self.resources[y])):
-                resource = self.resources[y][x]
-                if resource != 0:
-                    surface.blit(
-                        self.sprites.resources[resource], (x * TS, y * TS))
+        self._draw_terrain(surface)
+        self._draw_resources(surface)
         return surface
 
 
@@ -58,15 +76,19 @@ def create_plains():
             for _ in range(SCENE_SIZE[1])]
 
 
+def clear_space_around_player(player, scene):
+    for x in range(player[0] - 6, player[0] + 7):
+        for y in range(player[1] - 6, player[1] + 7):
+            scene[y][x] = 0
+
+
 def create_resources(player_start_positions):
     scene = [[0 for _ in range(SCENE_SIZE[0])] for _ in range(SCENE_SIZE[1])]
     create_forest(scene)
     create_gold(scene)
     create_stone(scene)
     for player in player_start_positions:
-        for x in range(player[0] - 6, player[0] + 7):
-            for y in range(player[1] - 6, player[1] + 7):
-                scene[y][x] = 0
+        clear_space_around_player(player, scene)
         add_main_patch(scene, player, randrange(1, 4), Resource.FOOD)
         add_main_patch(scene, player, randrange(1, 4), Resource.GOLD)
         add_main_patch(scene, player, randrange(1, 4), Resource.STONE)

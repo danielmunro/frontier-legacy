@@ -1,6 +1,7 @@
 from src.mob import MobUnit
 from src.sprites import Spritesheet
-from src.ui import Menu, ProgressBar
+from src.menu import Menu
+from src.ui import ProgressBar
 
 
 class BuildingUnit:

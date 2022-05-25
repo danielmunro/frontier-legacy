@@ -4,7 +4,7 @@ from src.constants import Actions, TS
 from src.mob import MobUnit, AttackType, Gender
 from src.resources import Costs
 from src.sprites import Spritesheet
-from src.ui import MilitaryMenu, VillagerMenu
+from src.menu import MilitaryMenu, VillagerMenu
 
 
 class Villager(MobUnit):
